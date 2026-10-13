@@ -91,3 +91,16 @@ Transfer learning depuis ImageNet sur spectrogrammes, PTB-DB (le téléchargemen
 - Wang et al. (2017), *Time series classification from scratch with deep neural networks: a strong baseline* — https://arxiv.org/abs/1611.06455
 - Moody & Mark (2001), MIT-BIH Arrhythmia Database — https://physionet.org/content/mitdb/1.0.0/
 - de Chazal et al. (2004), *Automatic classification of heartbeats using ECG morphology and heartbeat interval features*, IEEE TBME.
+
+
+## PARTIE DATA - MARIEM 
+Sur la branche dev:
+- ** essai.py — Exploration et test d'extraction
+
+Ce script sert à vérifier que les fichiers MIT-BIH sont correctement lus avec wfdb. Il affiche les premières annotations ECG, leur position et leur temps, puis extrait une fenêtre d'une seconde autour d'une annotation pour vérifier sa taille et ses valeurs.
+
+
+
+- ** preprocess.py — Prétraitement et préparation du dataset
+
+Ce script prépare les données pour le machine learning : il filtre et normalise les signaux ECG, extrait des fenêtres autour des battements, calcule des caractéristiques temporelles RR, attribue les étiquettes binaires normal/anormal, sépare les données en entraînement, validation et test, puis sauvegarde les datasets au format .npz.
