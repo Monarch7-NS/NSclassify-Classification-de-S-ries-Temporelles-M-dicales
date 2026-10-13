@@ -1,0 +1,21 @@
+# Environnements et caches Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Données et résultats (régénérables : voir scripts/download_data.py et src/train.py)
+data/*
+!data/.gitkeep
+results/*
+!results/.gitkeep
+*.pt
+*.npz
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
