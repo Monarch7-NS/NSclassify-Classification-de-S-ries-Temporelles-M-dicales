@@ -8,13 +8,13 @@
 - Ce qui manquait par rapport au protocole demandé : mapping strict, split documenté, 201/202 ensemble, fenêtre 216, prétraitements comparés, MLP, CNN-LSTM, pertes alternatives, traçage d'expériences, tests anti-fuite.
 
 ## 2. Conflits entre protocoles et résolution
-| Point | Meriem (legacy) | Prompt maître (retenu) |
+| Point | Meriem (legacy) | Protocole retenu |
 |---|---|---|
 | Mapping | regroupement MIT-BIH → N vs autres | `strict_v1` : N=0 ; L R B A a J S V r F e j n E = 1 ; `/ f Q ?` exclus |
 | Split | DS1/DS2 avec 201 en train | par groupes patients ; 201 avec 202 en test |
 | Fenêtre | autre longueur | 360 (référence, alignée sur Meriem) ; ablations 216 et 280 |
 | Normalisation | variable | z-score par battement (P1) ; P0, P2, P3 en ablation |
-Décision : protocole maître par défaut. Legacy conservé tel quel.
+Décision : protocole retenu par défaut. Legacy conservé tel quel.
 
 ## 3. Protocole
 Valeurs dans `configs/experiment.json`. Splits dans `configs/splits.json` (générés par `scripts/build_dataset.py`).
@@ -69,4 +69,4 @@ Nombre de configurations : 20 communes + 7 (MLP) + 10 (CNN) + 17 (CNN-LSTM) + ba
 - Un run par configuration à l'étape `factors` (seed 42) : les écarts inférieurs à la variabilité entre seeds ne sont pas interprétables ; la variabilité est mesurée à l'étape `final` seulement.
 - Validation de 5 patients : bruit de sélection non négligeable (hétérogénéité inter-patients forte).
 - Pas de validation croisée par patient (coût) ; à envisager si le temps le permet.
-- Filtrage non causal (voir DECISIONS).
+- Filtrage non causal.

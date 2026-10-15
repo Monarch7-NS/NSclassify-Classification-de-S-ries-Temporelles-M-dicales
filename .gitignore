@@ -34,7 +34,7 @@ results_etude2/ETUDE2_STATUS.txt
 src/train_legacy.py
 src/*.pdf
 
-# Outils d'assistance (notes locales, hors dépôt)
+# Notes locales (hors dépôt)
 .github/
 HANDOFF.md
 
