@@ -229,8 +229,9 @@ def cmd_search(a, d):
     cfgs = GRIDS[a.family]
     if a.configs:
         cfgs = [cfgs[int(i)] for i in a.configs.split(",")]
+    folds = [int(i) for i in a.folds.split(",")] if a.folds else range(K)
     for cfg in cfgs:
-        for k in range(K):
+        for k in folds:
             base = run_path(cfg, k)
             if ext(base, ".json").exists():
                 continue
@@ -312,7 +313,7 @@ def cmd_final(a, d):
     sel = json.loads((OUT / f"selection_{fam}.json").read_text(encoding="utf-8"))[fam]
     cfg, thr = sel["config"], sel["oof_threshold_max_f1"]
     epochs = max(5, int(round(sel["median_best_epoch"]))) if fam in DL else None
-    for seed in FINAL_SEEDS:
+    for seed in ([int(i) for i in a.seeds.split(",")] if a.seeds else FINAL_SEEDS):
         path = FINAL / f"{fam}__seed{seed}.json"
         if path.exists():
             continue                                  # le test n'est jamais relu pour une (famille, seed) déjà évaluée
@@ -382,6 +383,8 @@ def main():
     ap.add_argument("cmd", choices=["search", "select", "final", "report", "folds"])
     ap.add_argument("--family", choices=FAMILIES)
     ap.add_argument("--configs", help="indices de configurations (ex. 0,1,2) dans la grille de la famille")
+    ap.add_argument("--folds", help="search : plis à exécuter (ex. 3,4), pour répartir sur plusieurs processus")
+    ap.add_argument("--seeds", help="final : seeds à exécuter (ex. 45,46), pour répartir sur plusieurs processus")
     a = ap.parse_args()
     torch.set_num_threads(int(os.environ.get("OMP_NUM_THREADS", "4")))
     d = Data()

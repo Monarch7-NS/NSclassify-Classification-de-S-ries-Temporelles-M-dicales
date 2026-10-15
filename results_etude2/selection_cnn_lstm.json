@@ -1,0 +1,49 @@
+{
+  "cnn_lstm": {
+    "config": {
+      "epochs": 30,
+      "patience": 5,
+      "bs": 128,
+      "lr": 0.001,
+      "wd": 0.0001,
+      "clip": 1.0,
+      "augment": false,
+      "name": "lstm_lr1e-3_clip1",
+      "family": "cnn_lstm",
+      "arch": "cnnlstm_s",
+      "params": {
+        "kernel": 5,
+        "bn": true,
+        "act": "relu",
+        "cnn_dropout": 0.2,
+        "hidden": 64,
+        "layers": 1,
+        "pooling": "last"
+      }
+    },
+    "cv_pr_auc_mean": 0.5976631889179926,
+    "cv_pr_auc_std": 0.3078484957225982,
+    "oof_pr_auc": 0.44907835799728874,
+    "median_best_epoch": 6.0,
+    "oof_threshold_max_f1": 0.11818879842758179,
+    "oof_metrics_at_threshold": {
+      "threshold": 0.11818879842758179,
+      "tp": 9933,
+      "fn": 2631,
+      "fp": 12047,
+      "tn": 24397,
+      "sensitivity": 0.7905921680993314,
+      "specificity": 0.6694380419273406,
+      "precision": 0.4519108280254777,
+      "f1": 0.5750926354793887,
+      "accuracy": 0.7004978778974861,
+      "balanced_accuracy": 0.730015105013336,
+      "mcc": 0.4038708758855682,
+      "brier": 0.25484989634592314,
+      "pr_auc": 0.44907835799728874,
+      "roc_auc": 0.7232492184194292
+    },
+    "configs_complete": 6,
+    "configs_total": 6
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "cnn": {
+    "config": {
+      "epochs": 30,
+      "patience": 5,
+      "bs": 128,
+      "lr": 0.001,
+      "wd": 0.001,
+      "clip": 0.0,
+      "augment": true,
+      "name": "cnn_m_flat_wd1e-3_do0.5_aug",
+      "family": "cnn",
+      "arch": "cnn_m",
+      "params": {
+        "kernel": 5,
+        "bn": true,
+        "act": "relu",
+        "pool": "max",
+        "dropout": 0.5,
+        "head": "flatten"
+      }
+    },
+    "cv_pr_auc_mean": 0.7578137356440631,
+    "cv_pr_auc_std": 0.3059751644667,
+    "oof_pr_auc": 0.5966033669154738,
+    "median_best_epoch": 3.0,
+    "oof_threshold_max_f1": 0.8794648051261902,
+    "oof_metrics_at_threshold": {
+      "threshold": 0.8794648051261902,
+      "tp": 8203,
+      "fn": 4361,
+      "fp": 5316,
+      "tn": 31128,
+      "sensitivity": 0.6528971665074816,
+      "specificity": 0.854132367467896,
+      "precision": 0.6067756490864709,
+      "f1": 0.6289920637963424,
+      "accuracy": 0.8025424420502775,
+      "balanced_accuracy": 0.7535147669876888,
+      "mcc": 0.49532594307441546,
+      "brier": 0.20260831256242515,
+      "pr_auc": 0.5966033669154738,
+      "roc_auc": 0.8211812167515076
+    },
+    "configs_complete": 7,
+    "configs_total": 7
+  }
+}
