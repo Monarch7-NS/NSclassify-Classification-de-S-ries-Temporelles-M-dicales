@@ -1,0 +1,43 @@
+{
+  "mlp": {
+    "config": {
+      "epochs": 30,
+      "patience": 5,
+      "bs": 128,
+      "lr": 0.001,
+      "wd": 0.001,
+      "clip": 0.0,
+      "augment": false,
+      "name": "mlp_wd1e-3_do0.4",
+      "family": "mlp",
+      "arch": "mlp_a",
+      "params": {
+        "dropout": 0.4
+      }
+    },
+    "cv_pr_auc_mean": 0.6700630908525959,
+    "cv_pr_auc_std": 0.27713502470870016,
+    "oof_pr_auc": 0.5371082871834325,
+    "median_best_epoch": 7.0,
+    "oof_threshold_max_f1": 0.2840648889541626,
+    "oof_metrics_at_threshold": {
+      "threshold": 0.2840648889541626,
+      "tp": 9643,
+      "fn": 2921,
+      "fp": 8275,
+      "tn": 28169,
+      "sensitivity": 0.7675103470232411,
+      "specificity": 0.7729393041378554,
+      "precision": 0.5381739033374261,
+      "f1": 0.6327012663211076,
+      "accuracy": 0.7715475024485798,
+      "balanced_accuracy": 0.7702248255805482,
+      "mcc": 0.4899785820478351,
+      "brier": 0.20358904930409977,
+      "pr_auc": 0.5371082871834325,
+      "roc_auc": 0.7915186079126479
+    },
+    "configs_complete": 6,
+    "configs_total": 6
+  }
+}

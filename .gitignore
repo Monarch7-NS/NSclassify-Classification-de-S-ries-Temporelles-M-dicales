@@ -6,13 +6,33 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 
-# Données et résultats (régénérables : voir scripts/download_data.py et src/train.py)
+# Données (régénérables : voir scripts/build_dataset.py)
 data/*
 !data/.gitkeep
+
+# Résultats : on versionne tables, figures et sélections ; le reste est volumineux ou régénérable
 results/*
 !results/.gitkeep
+!results/tables/
+!results/figures/
+!results/selection.json
+!results/dataset_stats.json
+results_rr/experiments/
+results_etude2/runs/
+results_etude2/logs/
+results_etude2/ETUDE2_STATUS.txt
+
+# Artefacts binaires et journaux
 *.pt
+*.pth
 *.npz
+*.npy
+*.log
+*.err
+
+# Anciens tests (protocole Meriem d'avant les études 1 et 2) et documents lourds
+src/train_legacy.py
+src/*.pdf
 
 # IDE / OS
 .vscode/

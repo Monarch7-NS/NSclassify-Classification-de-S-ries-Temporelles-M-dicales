@@ -1,0 +1,153 @@
+{
+  "version": "1.0",
+  "project": "MIT-BIH binary heartbeat classification (0 = normal, 1 = abnormal)",
+  "dataset": {
+    "name": "MIT-BIH Arrhythmia Database",
+    "version": "1.0.0",
+    "source": "https://physionet.org/content/mitdb/1.0.0/",
+    "raw_dir": "data/mitdb",
+    "cache_dir": "data/processed",
+    "lead": "MLII",
+    "fs": 360
+  },
+  "label_mapping": {
+    "version": "strict_v1",
+    "normal": ["N"],
+    "abnormal": ["L", "R", "B", "A", "a", "J", "S", "V", "r", "F", "e", "j", "n", "E"],
+    "excluded_beats": ["/", "f", "Q", "?"],
+    "ignored_non_beats": "every other annotation symbol (rhythm, noise, waveform markers)"
+  },
+  "records": {
+    "ds1": ["101", "106", "108", "109", "112", "114", "115", "116", "118", "119", "122", "124", "201", "203", "205", "207", "208", "209", "215", "220", "223", "230"],
+    "ds2": ["100", "103", "105", "111", "113", "117", "121", "123", "200", "202", "210", "212", "213", "214", "219", "221", "222", "228", "231", "232", "233", "234"],
+    "paced_excluded": ["102", "104", "107", "217"],
+    "same_patient_groups": [["201", "202"]]
+  },
+  "split": {
+    "rule": "test = DS2 plus every DS1 record sharing a subject with a DS2 record (201 joins 202); validation = n_val_groups patient groups drawn from the remaining DS1 records",
+    "n_val_groups": 5,
+    "min_abnormal_val": 1500,
+    "max_record_share_val": 0.5,
+    "type_weight": 0.5,
+    "criterion": "minimise |prevalence(val) - prevalence(train)| + type_weight * TV(abnormal-type distribution val vs train), subject to min_abnormal_val and no record contributing more than max_record_share_val of the validation abnormal beats; computed from annotation counts only (no model, no test information)",
+    "splits_file": "configs/splits.json"
+  },
+  "windows": {
+    "stored": [180, 180],
+    "216": [90, 126],
+    "280": [110, 170],
+    "360": [180, 180],
+    "note": "windows are [samples before R, samples after R], cropped from one stored 360-sample window (1.0 s at 360 Hz) so that every beat exists for all lengths; default is 360 (aligned with the teammate pipeline), 216 and 280 are window-length ablations"
+  },
+  "bandpass": {"low_hz": 0.5, "high_hz": 40.0, "order": 4, "zero_phase": true},
+  "preprocessing": {
+    "default": "P1",
+    "P0": "raw window, per-beat z-normalisation",
+    "P1": "zero-phase band-pass 0.5-40 Hz, per-beat z-normalisation",
+    "P2": "band-pass, global standardisation with train-set scalar mean/std",
+    "P3": "band-pass, robust scaling with train-set scalar median/IQR"
+  },
+  "seeds": {"default": 42, "final": [42, 43, 44]},
+  "selection": {
+    "criterion": "val_pr_auc",
+    "threshold_rule": "max_f1",
+    "sensitivity_target": 0.90,
+    "top_k_per_family": 2
+  },
+  "defaults": {
+    "deep": {
+      "preprocess": "P1",
+      "window": 360,
+      "use_rr": false,
+      "loss": {"name": "bce_pw"},
+      "optimizer": {"name": "adamw", "lr": 0.001, "weight_decay": 0.0001, "momentum": 0.9},
+      "scheduler": "none",
+      "batch_size": 128,
+      "epochs": 30,
+      "patience": 5,
+      "clip_grad": 0.0,
+      "augment": false,
+      "sampler": "none"
+    },
+    "models": {
+      "mlp": {"arch": "mlp_a", "params": {}},
+      "cnn": {"arch": "cnn_m", "params": {"kernel": 5, "bn": true, "act": "relu", "pool": "max", "dropout": 0.2, "head": "gap"}},
+      "cnn_lstm": {"arch": "cnnlstm_s", "params": {"kernel": 5, "bn": true, "act": "relu", "cnn_dropout": 0.2, "hidden": 64, "layers": 1, "pooling": "last"}, "clip_grad": 1.0}
+    },
+    "sklearn": {
+      "lr": {"grid": {"C": [0.01, 0.1, 1, 10], "l1_ratio": [0.0, 1.0], "class_weight": ["balanced", null]}},
+      "rf": {"grid": {"n_estimators": [300], "max_depth": [12, 20, null], "min_samples_leaf": [1, 3, 5], "class_weight": ["balanced_subsample", null]}}
+    }
+  },
+  "factors": {
+    "common": [
+      {"label": "preprocess=P0", "set": {"preprocess": "P0"}},
+      {"label": "preprocess=P2", "set": {"preprocess": "P2"}},
+      {"label": "preprocess=P3", "set": {"preprocess": "P3"}},
+      {"label": "window=216", "set": {"window": 216}},
+      {"label": "window=280", "set": {"window": 280}},
+      {"label": "use_rr=true", "set": {"use_rr": true}},
+      {"label": "loss=bce_unweighted", "set": {"loss": {"name": "bce"}}},
+      {"label": "loss=focal_g1", "set": {"loss": {"name": "focal", "gamma": 1.0}}},
+      {"label": "loss=focal_g2", "set": {"loss": {"name": "focal", "gamma": 2.0}}},
+      {"label": "loss=mse_unsuitable", "set": {"loss": {"name": "mse_unsuitable"}}},
+      {"label": "optimizer=adam", "set": {"optimizer": {"name": "adam", "lr": 0.001, "weight_decay": 0.0001, "momentum": 0.9}}},
+      {"label": "optimizer=sgd", "set": {"optimizer": {"name": "sgd", "lr": 0.01, "weight_decay": 0.0001, "momentum": 0.9}}},
+      {"label": "lr=1e-2", "set": {"optimizer": {"name": "adamw", "lr": 0.01, "weight_decay": 0.0001, "momentum": 0.9}}},
+      {"label": "lr=3e-4", "set": {"optimizer": {"name": "adamw", "lr": 0.0003, "weight_decay": 0.0001, "momentum": 0.9}}},
+      {"label": "weight_decay=0", "set": {"optimizer": {"name": "adamw", "lr": 0.001, "weight_decay": 0.0, "momentum": 0.9}}},
+      {"label": "weight_decay=1e-3", "set": {"optimizer": {"name": "adamw", "lr": 0.001, "weight_decay": 0.001, "momentum": 0.9}}},
+      {"label": "batch=32", "set": {"batch_size": 32}},
+      {"label": "batch=64", "set": {"batch_size": 64}},
+      {"label": "scheduler=plateau", "set": {"scheduler": "plateau"}},
+      {"label": "scheduler=cosine", "set": {"scheduler": "cosine"}},
+      {"label": "augment=mild", "set": {"augment": true}},
+      {"label": "sampler=weighted", "set": {"sampler": "weighted", "loss": {"name": "bce"}}}
+    ],
+    "mlp": [
+      {"label": "arch=mlp_b", "set": {"model.arch": "mlp_b"}},
+      {"label": "arch=mlp_c", "set": {"model.arch": "mlp_c"}},
+      {"label": "act=leaky_relu", "set": {"model.params.act": "leaky_relu"}},
+      {"label": "act=gelu", "set": {"model.params.act": "gelu"}},
+      {"label": "dropout=0", "set": {"model.params.dropout": 0.0}},
+      {"label": "dropout=0.4", "set": {"model.params.dropout": 0.4}},
+      {"label": "bn=true", "set": {"model.params.bn": true}}
+    ],
+    "cnn": [
+      {"label": "arch=cnn_s", "set": {"model.arch": "cnn_s"}},
+      {"label": "arch=fcn", "set": {"model.arch": "fcn"}},
+      {"label": "kernel=3", "set": {"model.params.kernel": 3}},
+      {"label": "kernel=7", "set": {"model.params.kernel": 7}},
+      {"label": "kernel=multiscale", "set": {"model.params.kernel": "multi"}},
+      {"label": "blocks=2", "set": {"model.params.channels": [32, 64]}},
+      {"label": "pool=stride", "set": {"model.params.pool": "stride"}},
+      {"label": "bn=false", "set": {"model.params.bn": false}},
+      {"label": "dropout=0.4", "set": {"model.params.dropout": 0.4}},
+      {"label": "head=flatten", "set": {"model.params.head": "flatten"}}
+    ],
+    "cnn_lstm": [
+      {"label": "arch=cnnlstm_m", "set": {"model.arch": "cnnlstm_m"}},
+      {"label": "arch=cnn_bilstm", "set": {"model.arch": "cnn_bilstm"}},
+      {"label": "kernel=3", "set": {"model.params.kernel": 3}},
+      {"label": "kernel=7", "set": {"model.params.kernel": 7}},
+      {"label": "kernel=multiscale", "set": {"model.params.kernel": "multi"}},
+      {"label": "bn=false", "set": {"model.params.bn": false}},
+      {"label": "act=gelu", "set": {"model.params.act": "gelu"}},
+      {"label": "cnn_dropout=0", "set": {"model.params.cnn_dropout": 0.0}},
+      {"label": "cnn_dropout=0.4", "set": {"model.params.cnn_dropout": 0.4}},
+      {"label": "hidden=32", "set": {"model.params.hidden": 32}},
+      {"label": "hidden=128", "set": {"model.params.hidden": 128}},
+      {"label": "layers=2", "set": {"model.params.layers": 2}},
+      {"label": "layers=2,rnn_dropout=0.2", "set": {"model.params.layers": 2, "model.params.rnn_dropout": 0.2}},
+      {"label": "layers=2,rnn_dropout=0.4", "set": {"model.params.layers": 2, "model.params.rnn_dropout": 0.4}},
+      {"label": "pooling=mean", "set": {"model.params.pooling": "mean"}},
+      {"label": "pooling=attention", "set": {"model.params.pooling": "attention"}},
+      {"label": "clip_grad=0", "set": {"clip_grad": 0.0}}
+    ]
+  },
+  "factorial": {
+    "loss": [{"name": "bce"}, {"name": "bce_pw"}, {"name": "focal", "gamma": 2.0}],
+    "augment": [false, true]
+  },
+  "stages": ["baseline", "factors", "select", "factorial", "final"]
+}

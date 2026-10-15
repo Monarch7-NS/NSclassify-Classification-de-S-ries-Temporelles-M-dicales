@@ -1,0 +1,33 @@
+{
+  "lr": {
+    "config": {
+      "name": "lr_C0.01",
+      "family": "lr",
+      "C": 0.01
+    },
+    "cv_pr_auc_mean": 0.7527088783497876,
+    "cv_pr_auc_std": 0.17149067133123394,
+    "oof_pr_auc": 0.7069335352889267,
+    "median_best_epoch": null,
+    "oof_threshold_max_f1": 0.4696086049079895,
+    "oof_metrics_at_threshold": {
+      "threshold": 0.4696086049079895,
+      "tp": 9801,
+      "fn": 2763,
+      "fp": 5184,
+      "tn": 31260,
+      "sensitivity": 0.7800859598853869,
+      "specificity": 0.8577543628580836,
+      "precision": 0.654054054054054,
+      "f1": 0.7115321790264619,
+      "accuracy": 0.8378428011753183,
+      "balanced_accuracy": 0.8189201613717352,
+      "mcc": 0.6044693400918612,
+      "brier": 0.13221729704947702,
+      "pr_auc": 0.7069335352889267,
+      "roc_auc": 0.8698766508212012
+    },
+    "configs_complete": 4,
+    "configs_total": 4
+  }
+}

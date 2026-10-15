@@ -18,7 +18,7 @@ def filter_ecg(signal, fs=360):
     return sosfiltfilt(sos, signal)
 
 # 1. Dossier où se trouvent les fichiers mitdb (ex: 'data/mitdb' ou 'data')
-DATA_DIR = 'data'
+DATA_DIR = os.path.join('data', 'mitdb')
 OUTPUT_DIR = 'data'
 WINDOW_SIZE = 180  # 180 avant + 180 après = 360 points (1 seconde à 360 Hz)
 

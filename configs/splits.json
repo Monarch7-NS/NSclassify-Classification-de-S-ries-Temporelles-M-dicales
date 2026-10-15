@@ -1,0 +1,474 @@
+{
+  "label_mapping_version": "strict_v1",
+  "selection": {
+    "search": "exhaustive over group combinations",
+    "score": 0.21141293621687102,
+    "uses": "annotation counts only"
+  },
+  "train": [
+    "101",
+    "106",
+    "108",
+    "109",
+    "112",
+    "114",
+    "115",
+    "116",
+    "118",
+    "119",
+    "122",
+    "208",
+    "209",
+    "220",
+    "223",
+    "230"
+  ],
+  "val": [
+    "124",
+    "203",
+    "205",
+    "207",
+    "215"
+  ],
+  "test": [
+    "100",
+    "103",
+    "105",
+    "111",
+    "113",
+    "117",
+    "121",
+    "123",
+    "200",
+    "201",
+    "202",
+    "210",
+    "212",
+    "213",
+    "214",
+    "219",
+    "221",
+    "222",
+    "228",
+    "231",
+    "232",
+    "233",
+    "234"
+  ],
+  "record_counts": {
+    "101": {
+      "normal": 1860,
+      "abnormal": 3,
+      "excluded": 2,
+      "abnormal_symbols": {
+        "A": 3
+      }
+    },
+    "106": {
+      "normal": 1507,
+      "abnormal": 520,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 520
+      }
+    },
+    "108": {
+      "normal": 1739,
+      "abnormal": 24,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 17,
+        "F": 2,
+        "A": 4,
+        "j": 1
+      }
+    },
+    "109": {
+      "normal": 0,
+      "abnormal": 2532,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "L": 2492,
+        "F": 2,
+        "V": 38
+      }
+    },
+    "112": {
+      "normal": 2537,
+      "abnormal": 2,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "A": 2
+      }
+    },
+    "114": {
+      "normal": 1820,
+      "abnormal": 59,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 43,
+        "J": 2,
+        "F": 4,
+        "A": 10
+      }
+    },
+    "115": {
+      "normal": 1953,
+      "abnormal": 0,
+      "excluded": 0,
+      "abnormal_symbols": {}
+    },
+    "116": {
+      "normal": 2302,
+      "abnormal": 110,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 109,
+        "A": 1
+      }
+    },
+    "118": {
+      "normal": 0,
+      "abnormal": 2278,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "R": 2166,
+        "V": 16,
+        "A": 96
+      }
+    },
+    "119": {
+      "normal": 1543,
+      "abnormal": 444,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 444
+      }
+    },
+    "122": {
+      "normal": 2476,
+      "abnormal": 0,
+      "excluded": 0,
+      "abnormal_symbols": {}
+    },
+    "124": {
+      "normal": 0,
+      "abnormal": 1619,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "R": 1531,
+        "J": 29,
+        "V": 47,
+        "F": 5,
+        "A": 2,
+        "j": 5
+      }
+    },
+    "203": {
+      "normal": 2529,
+      "abnormal": 447,
+      "excluded": 4,
+      "abnormal_symbols": {
+        "V": 444,
+        "a": 2,
+        "F": 1
+      }
+    },
+    "205": {
+      "normal": 2571,
+      "abnormal": 85,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 71,
+        "A": 3,
+        "F": 11
+      }
+    },
+    "207": {
+      "normal": 0,
+      "abnormal": 1860,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "R": 86,
+        "V": 105,
+        "L": 1457,
+        "E": 105,
+        "A": 107
+      }
+    },
+    "208": {
+      "normal": 1586,
+      "abnormal": 1367,
+      "excluded": 2,
+      "abnormal_symbols": {
+        "F": 373,
+        "V": 992,
+        "S": 2
+      }
+    },
+    "209": {
+      "normal": 2621,
+      "abnormal": 384,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "A": 383,
+        "V": 1
+      }
+    },
+    "215": {
+      "normal": 3195,
+      "abnormal": 168,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 164,
+        "A": 3,
+        "F": 1
+      }
+    },
+    "220": {
+      "normal": 1954,
+      "abnormal": 94,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "A": 94
+      }
+    },
+    "223": {
+      "normal": 2029,
+      "abnormal": 576,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 473,
+        "A": 72,
+        "e": 16,
+        "F": 14,
+        "a": 1
+      }
+    },
+    "230": {
+      "normal": 2255,
+      "abnormal": 1,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 1
+      }
+    },
+    "100": {
+      "normal": 2239,
+      "abnormal": 34,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "A": 33,
+        "V": 1
+      }
+    },
+    "103": {
+      "normal": 2082,
+      "abnormal": 2,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "A": 2
+      }
+    },
+    "105": {
+      "normal": 2526,
+      "abnormal": 41,
+      "excluded": 5,
+      "abnormal_symbols": {
+        "V": 41
+      }
+    },
+    "111": {
+      "normal": 0,
+      "abnormal": 2124,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "L": 2123,
+        "V": 1
+      }
+    },
+    "113": {
+      "normal": 1789,
+      "abnormal": 6,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "a": 6
+      }
+    },
+    "117": {
+      "normal": 1534,
+      "abnormal": 1,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "A": 1
+      }
+    },
+    "121": {
+      "normal": 1861,
+      "abnormal": 2,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "A": 1,
+        "V": 1
+      }
+    },
+    "123": {
+      "normal": 1515,
+      "abnormal": 3,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 3
+      }
+    },
+    "200": {
+      "normal": 1743,
+      "abnormal": 858,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 826,
+        "A": 30,
+        "F": 2
+      }
+    },
+    "202": {
+      "normal": 2061,
+      "abnormal": 75,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 19,
+        "A": 36,
+        "a": 19,
+        "F": 1
+      }
+    },
+    "210": {
+      "normal": 2423,
+      "abnormal": 227,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 194,
+        "F": 10,
+        "a": 22,
+        "E": 1
+      }
+    },
+    "212": {
+      "normal": 923,
+      "abnormal": 1825,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "R": 1825
+      }
+    },
+    "213": {
+      "normal": 2641,
+      "abnormal": 610,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "F": 362,
+        "A": 25,
+        "V": 220,
+        "a": 3
+      }
+    },
+    "214": {
+      "normal": 0,
+      "abnormal": 2260,
+      "excluded": 2,
+      "abnormal_symbols": {
+        "L": 2003,
+        "V": 256,
+        "F": 1
+      }
+    },
+    "219": {
+      "normal": 2082,
+      "abnormal": 72,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 64,
+        "F": 1,
+        "A": 7
+      }
+    },
+    "221": {
+      "normal": 2031,
+      "abnormal": 396,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 396
+      }
+    },
+    "222": {
+      "normal": 2062,
+      "abnormal": 421,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "A": 208,
+        "j": 212,
+        "J": 1
+      }
+    },
+    "228": {
+      "normal": 1688,
+      "abnormal": 365,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 362,
+        "A": 3
+      }
+    },
+    "231": {
+      "normal": 314,
+      "abnormal": 1257,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "R": 1254,
+        "A": 1,
+        "V": 2
+      }
+    },
+    "232": {
+      "normal": 0,
+      "abnormal": 1780,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "R": 397,
+        "A": 1382,
+        "j": 1
+      }
+    },
+    "233": {
+      "normal": 2230,
+      "abnormal": 849,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "V": 831,
+        "A": 7,
+        "F": 11
+      }
+    },
+    "234": {
+      "normal": 2700,
+      "abnormal": 53,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "J": 50,
+        "V": 3
+      }
+    },
+    "201": {
+      "normal": 1625,
+      "abnormal": 338,
+      "excluded": 0,
+      "abnormal_symbols": {
+        "a": 97,
+        "j": 10,
+        "V": 198,
+        "A": 30,
+        "J": 1,
+        "F": 2
+      }
+    }
+  }
+}

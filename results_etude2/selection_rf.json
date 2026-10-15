@@ -1,0 +1,34 @@
+{
+  "rf": {
+    "config": {
+      "name": "rf_d12_leaf1",
+      "family": "rf",
+      "max_depth": 12,
+      "min_samples_leaf": 1
+    },
+    "cv_pr_auc_mean": 0.7490532595383461,
+    "cv_pr_auc_std": 0.21135881638463577,
+    "oof_pr_auc": 0.7387827923188648,
+    "median_best_epoch": null,
+    "oof_threshold_max_f1": 0.30474138259887695,
+    "oof_metrics_at_threshold": {
+      "threshold": 0.30474138259887695,
+      "tp": 9898,
+      "fn": 2666,
+      "fp": 5604,
+      "tn": 30840,
+      "sensitivity": 0.7878064310729067,
+      "specificity": 0.8462298320711228,
+      "precision": 0.638498258289253,
+      "f1": 0.7053374189410674,
+      "accuracy": 0.8312520404831865,
+      "balanced_accuracy": 0.8170181315720147,
+      "mcc": 0.5953000543085717,
+      "brier": 0.11565692278168702,
+      "pr_auc": 0.7387827923188648,
+      "roc_auc": 0.8754995430966714
+    },
+    "configs_complete": 4,
+    "configs_total": 4
+  }
+}

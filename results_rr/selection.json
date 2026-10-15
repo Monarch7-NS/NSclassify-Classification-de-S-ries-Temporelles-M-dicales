@@ -1,0 +1,248 @@
+[
+  {
+    "preprocess": "P2",
+    "window": 360,
+    "use_rr": true,
+    "rr_cols": [
+      0,
+      1,
+      3
+    ],
+    "loss": {
+      "name": "bce_pw"
+    },
+    "optimizer": {
+      "name": "adamw",
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "momentum": 0.9
+    },
+    "scheduler": "none",
+    "batch_size": 128,
+    "epochs": 30,
+    "patience": 5,
+    "clip_grad": 0.0,
+    "augment": false,
+    "sampler": "none",
+    "model": {
+      "family": "mlp",
+      "arch": "mlp_a",
+      "params": {}
+    },
+    "stage": "factors",
+    "seed": 42,
+    "factor": "preprocess=P2",
+    "_selected_from": "factors-mlp-6ea82177",
+    "_val_pr_auc": 0.6655082098874352
+  },
+  {
+    "preprocess": "P2",
+    "window": 360,
+    "use_rr": true,
+    "rr_cols": [
+      0,
+      1,
+      3
+    ],
+    "loss": {
+      "name": "bce_pw"
+    },
+    "optimizer": {
+      "name": "adamw",
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "momentum": 0.9
+    },
+    "scheduler": "none",
+    "batch_size": 128,
+    "epochs": 30,
+    "patience": 5,
+    "clip_grad": 0.0,
+    "augment": false,
+    "sampler": "none",
+    "model": {
+      "family": "mlp",
+      "arch": "mlp_a",
+      "params": {}
+    },
+    "stage": "factorial",
+    "seed": 42,
+    "factor": "loss=bce_pw,augment=False",
+    "_selected_from": "factorial-mlp-926e256f",
+    "_val_pr_auc": 0.6655082098874352
+  },
+  {
+    "preprocess": "P1",
+    "window": 360,
+    "use_rr": true,
+    "rr_cols": [
+      0,
+      1,
+      3
+    ],
+    "loss": {
+      "name": "bce_pw"
+    },
+    "optimizer": {
+      "name": "adamw",
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "momentum": 0.9
+    },
+    "scheduler": "none",
+    "batch_size": 128,
+    "epochs": 30,
+    "patience": 5,
+    "clip_grad": 0.0,
+    "augment": true,
+    "sampler": "none",
+    "model": {
+      "family": "cnn",
+      "arch": "cnn_m",
+      "params": {
+        "kernel": 5,
+        "bn": true,
+        "act": "relu",
+        "pool": "max",
+        "dropout": 0.2,
+        "head": "flatten"
+      }
+    },
+    "stage": "factorial",
+    "seed": 42,
+    "factor": "loss=bce_pw,augment=True",
+    "_selected_from": "factorial-cnn-6e742995",
+    "_val_pr_auc": 0.7694977528410926
+  },
+  {
+    "preprocess": "P1",
+    "window": 360,
+    "use_rr": true,
+    "rr_cols": [
+      0,
+      1,
+      3
+    ],
+    "loss": {
+      "name": "bce_pw"
+    },
+    "optimizer": {
+      "name": "adamw",
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "momentum": 0.9
+    },
+    "scheduler": "none",
+    "batch_size": 128,
+    "epochs": 30,
+    "patience": 5,
+    "clip_grad": 0.0,
+    "augment": false,
+    "sampler": "none",
+    "model": {
+      "family": "cnn",
+      "arch": "cnn_m",
+      "params": {
+        "kernel": 5,
+        "bn": true,
+        "act": "relu",
+        "pool": "max",
+        "dropout": 0.2,
+        "head": "flatten"
+      }
+    },
+    "stage": "factorial",
+    "seed": 42,
+    "factor": "loss=bce_pw,augment=False",
+    "_selected_from": "factorial-cnn-72349c7d",
+    "_val_pr_auc": 0.6881045110401725
+  },
+  {
+    "preprocess": "P1",
+    "window": 360,
+    "use_rr": false,
+    "rr_cols": [
+      0,
+      1,
+      3
+    ],
+    "loss": {
+      "name": "bce_pw"
+    },
+    "optimizer": {
+      "name": "adamw",
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "momentum": 0.9
+    },
+    "scheduler": "none",
+    "batch_size": 128,
+    "epochs": 30,
+    "patience": 5,
+    "clip_grad": 1.0,
+    "augment": false,
+    "sampler": "none",
+    "model": {
+      "family": "cnn_lstm",
+      "arch": "cnnlstm_s",
+      "params": {
+        "kernel": 5,
+        "bn": true,
+        "act": "relu",
+        "cnn_dropout": 0.2,
+        "hidden": 64,
+        "layers": 1,
+        "pooling": "last"
+      }
+    },
+    "stage": "factors",
+    "seed": 42,
+    "factor": "use_rr=false",
+    "_selected_from": "factors-cnn_lstm-fc4df087",
+    "_val_pr_auc": 0.6418860468331119
+  },
+  {
+    "preprocess": "P1",
+    "window": 360,
+    "use_rr": false,
+    "rr_cols": [
+      0,
+      1,
+      3
+    ],
+    "loss": {
+      "name": "bce_pw"
+    },
+    "optimizer": {
+      "name": "adamw",
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "momentum": 0.9
+    },
+    "scheduler": "none",
+    "batch_size": 128,
+    "epochs": 30,
+    "patience": 5,
+    "clip_grad": 1.0,
+    "augment": false,
+    "sampler": "none",
+    "model": {
+      "family": "cnn_lstm",
+      "arch": "cnnlstm_s",
+      "params": {
+        "kernel": 5,
+        "bn": true,
+        "act": "relu",
+        "cnn_dropout": 0.2,
+        "hidden": 64,
+        "layers": 1,
+        "pooling": "last"
+      }
+    },
+    "stage": "factorial",
+    "seed": 42,
+    "factor": "loss=bce_pw,augment=False",
+    "_selected_from": "factorial-cnn_lstm-734ee685",
+    "_val_pr_auc": 0.6124006962243221
+  }
+]

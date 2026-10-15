@@ -1,0 +1,2 @@
+stage,factor,id,val_pr_auc,val_roc_auc,val_f1,val_sensitivity,val_specificity,val_precision,val_mcc,best_epoch,epochs_run,overfit_gap_last_epoch,status
+baseline,meriem_original,baseline-lstm-e56113e4,0.5205909208000207,0.5488703230527724,0.5905133203378818,0.5441916167664671,0.8494390155627941,0.6454545454545455,0.41269667566362833,7.0,12.0,,ok
