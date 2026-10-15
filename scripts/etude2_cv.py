@@ -1,12 +1,12 @@
-﻿"""Ã‰tude 2 (etude2_cv_groupee) : optimisation des hyperparamÃ¨tres par validation croisÃ©e groupÃ©e par patient.
+"""Étude 2 (etude2_cv_groupee) : optimisation des hyperparamètres par validation croisée groupée par patient.
 
-DiffÃ©rences avec l'Ã©tude 1 (results_rr/) :
-  - sÃ©lection par CV groupÃ©e par patient sur train + validation (21 patients, 5 plis) au lieu d'une validation de 5 patients ;
-  - grilles orientÃ©es rÃ©gularisation (weight decay, dropout, taille) et stabilitÃ© (CNN-LSTM : lr plus bas, pooling) ;
-  - tous les rÃ©seaux reÃ§oivent les 3 RR (CNN-LSTM compris) ; prÃ©traitement P1, fenÃªtre 360, perte bce_pw ;
-  - seuil max-F1 dÃ©terminÃ© sur les prÃ©dictions hors pli (OOF) ; 5 seeds en final ;
-  - modÃ¨le final entraÃ®nÃ© sur les 21 patients, nombre d'Ã©poques fixÃ© (mÃ©diane des meilleures Ã©poques des plis).
-Le test n'est lu qu'Ã  l'Ã©tape `final`, une seule fois par (famille, seed). Ce n'est PAS une premiÃ¨re lecture : voir HANDOFF.md.
+Différences avec l'étude 1 (results_rr/) :
+  - sélection par CV groupée par patient sur train + validation (21 patients, 5 plis) au lieu d'une validation de 5 patients ;
+  - grilles orientées régularisation (weight decay, dropout, taille) et stabilité (CNN-LSTM : lr plus bas, pooling) ;
+  - tous les réseaux reçoivent les 3 RR (CNN-LSTM compris) ; prétraitement P1, fenêtre 360, perte bce_pw ;
+  - seuil max-F1 déterminé sur les prédictions hors pli (OOF) ; 5 seeds en final ;
+  - modèle final entraîné sur les 21 patients, nombre d'époques fixé (médiane des meilleures époques des plis).
+Le test n'est lu qu'à l'étape `final`, une seule fois par (famille, seed). Ce n'est PAS une première lecture : voir le README.
 
 Sous-commandes : search | select | final | report   (voir --help)
 """
@@ -40,7 +40,7 @@ from src.models import build_model, count_params  # noqa: E402
 
 OUT = ROOT / "results_etude2"
 RUNS, FINAL, TABLES = OUT / "runs", OUT / "final", OUT / "tables"
-RR_COLS = [0, 1, 3]            # rr_prev, rr_next, rr_ratio_prev (colonnes de rr_matrix), comme l'Ã©tude 1
+RR_COLS = [0, 1, 3]            # rr_prev, rr_next, rr_ratio_prev (colonnes de rr_matrix), comme l'étude 1
 K = 5
 SEARCH_SEED = 42
 FINAL_SEEDS = [42, 43, 44, 45, 46]
@@ -91,11 +91,11 @@ GRIDS = {
 
 
 # ---------------------------------------------------------------------------
-# DonnÃ©es
+# Données
 # ---------------------------------------------------------------------------
 
 class Data:
-    """Pool (train + val = 21 patients) et test, P1 / fenÃªtre 360. RR brut (3 colonnes) + features LR/RF (14 colonnes)."""
+    """Pool (train + val = 21 patients) et test, P1 / fenêtre 360. RR brut (3 colonnes) + features LR/RF (14 colonnes)."""
 
     def __init__(self):
         p = prepare("P1", 360)
@@ -103,10 +103,10 @@ class Data:
         self.X, self.F, self.y = cat(p.X), cat(p.F), cat(p.y)
         self.rec = np.concatenate([p.meta["train"]["record_id"], p.meta["val"]["record_id"]]).astype(str)
         self.sym = np.concatenate([p.meta["train"]["symbol"], p.meta["val"]["symbol"]]).astype(str)
-        # p.RR : 3 colonnes [0,1,3] (experiment_rr.json), standardisÃ©es ; re-standardiser par pli est une transformation affine
-        # identique Ã  standardiser les valeurs brutes avec les stats du pli.
+        # p.RR : 3 colonnes [0,1,3] (experiment_rr.json), standardisées ; re-standardiser par pli est une transformation affine
+        # identique à standardiser les valeurs brutes avec les stats du pli.
         self.RR = cat(p.RR)
-        assert self.RR.shape[1] == len(RR_COLS), "EXPERIMENT_CONFIG doit Ãªtre configs/experiment_rr.json"
+        assert self.RR.shape[1] == len(RR_COLS), "EXPERIMENT_CONFIG doit être configs/experiment_rr.json"
         self.Xt, self.Ft, self.yt = p.X["test"], p.F["test"], p.y["test"]
         self.rect = p.meta["test"]["record_id"].astype(str)
         self.symt = p.meta["test"]["symbol"].astype(str)
@@ -114,7 +114,7 @@ class Data:
         self.fold = self._folds()
 
     def _folds(self):
-        """Affectation dÃ©terministe record -> pli, calculÃ©e Ã  partir des seuls comptages d'annotations (pas du test)."""
+        """Affectation déterministe record -> pli, calculée à partir des seuls comptages d'annotations (pas du test)."""
         path = OUT / "folds.json"
         recs = sorted(set(self.rec.tolist()), key=int)
         if path.exists():
@@ -125,7 +125,7 @@ class Data:
             bbb = sorted([r for r in recs if info[r]["bbb"] > 0.5], key=lambda r: -info[r]["abn"])
             rest = sorted([r for r in recs if r not in bbb], key=lambda r: -info[r]["n"])
             load, m = [0] * K, {}
-            for i, r in enumerate(bbb):                       # blocs de branche rÃ©partis un par pli
+            for i, r in enumerate(bbb):                       # blocs de branche répartis un par pli
                 m[r] = i % K
                 load[i % K] += info[r]["n"]
             for r in rest:                                    # puis remplissage glouton par nombre de battements
@@ -147,7 +147,7 @@ def std_rr(train_rr, *others):
 
 
 # ---------------------------------------------------------------------------
-# EntraÃ®nement
+# Entraînement
 # ---------------------------------------------------------------------------
 
 @torch.no_grad()
@@ -160,7 +160,7 @@ def predict(model, X, RR, bs=4096):
 
 
 def train_dl(cfg, Xtr, RRtr, ytr, seed, epochs, es=None):
-    """es = (X, RR, y) du pli d'arrÃªt prÃ©coce, ou None (nombre d'Ã©poques fixÃ©). Retourne modÃ¨le, meilleure Ã©poque, statut."""
+    """es = (X, RR, y) du pli d'arrêt précoce, ou None (nombre d'époques fixé). Retourne modèle, meilleure époque, statut."""
     tr.set_seed(seed)
     model = build_model(cfg["arch"], cfg["params"], length=Xtr.shape[1], n_rr=RRtr.shape[1])
     loss_fn = build_loss({"name": "bce_pw"}, ytr)
@@ -196,7 +196,7 @@ def train_dl(cfg, Xtr, RRtr, ytr, seed, epochs, es=None):
                     break
     if es is not None:
         if best_state is None:
-            raise RuntimeError("aucun modÃ¨le valide")
+            raise RuntimeError("aucun modèle valide")
         model.load_state_dict(best_state)
     else:
         best_epoch = epochs
@@ -300,7 +300,7 @@ def cmd_select(a, d):
                     "oof_pr_auc": float(best.oof_pr_auc), "median_best_epoch": best.median_best_epoch,
                     "oof_threshold_max_f1": thr, "oof_metrics_at_threshold": ev.compute_metrics(d.y, oof, thr),
                     "configs_complete": int(len(ok)), "configs_total": len(GRIDS[fam])}
-        print(f"[select] {fam}: {best.config} cv={best.cv_pr_auc_mean:.4f}Â±{best.cv_pr_auc_std:.4f} thr={thr:.4f}", flush=True)
+        print(f"[select] {fam}: {best.config} cv={best.cv_pr_auc_mean:.4f}±{best.cv_pr_auc_std:.4f} thr={thr:.4f}", flush=True)
     path = OUT / (f"selection_{a.family}.json" if a.family else "selection.json")
     path.write_text(json.dumps(sel, indent=2, default=str), encoding="utf-8")
     pd.concat(tabs).to_csv(OUT / (f"search_table_{a.family}.csv" if a.family else "search_table.csv"), index=False)
@@ -315,9 +315,9 @@ def cmd_final(a, d):
     for seed in FINAL_SEEDS:
         path = FINAL / f"{fam}__seed{seed}.json"
         if path.exists():
-            continue                                  # le test n'est jamais relu pour une (famille, seed) dÃ©jÃ  Ã©valuÃ©e
+            continue                                  # le test n'est jamais relu pour une (famille, seed) déjà évaluée
         if fam == "lr" and seed != FINAL_SEEDS[0]:
-            continue                                  # LR dÃ©terministe
+            continue                                  # LR déterministe
         t0 = time.perf_counter()
         if fam in DL:
             rtr, rte = std_rr(d.RR, d.RRt)

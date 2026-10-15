@@ -14,10 +14,10 @@
 | Split | DS1/DS2 avec 201 en train | par groupes patients ; 201 avec 202 en test |
 | Fenêtre | autre longueur | 360 (référence, alignée sur Meriem) ; ablations 216 et 280 |
 | Normalisation | variable | z-score par battement (P1) ; P0, P2, P3 en ablation |
-Décision : protocole maître par défaut (voir `.github/knowledge/DECISIONS.md`). Legacy conservé tel quel.
+Décision : protocole maître par défaut. Legacy conservé tel quel.
 
 ## 3. Protocole
-Voir `.github/knowledge/EXPERIMENTAL_RULES.md` (règles) et `configs/experiment.json` (valeurs). Splits dans `configs/splits.json` (générés par `scripts/build_dataset.py`).
+Valeurs dans `configs/experiment.json`. Splits dans `configs/splits.json` (générés par `scripts/build_dataset.py`).
 
 Contrôles avant tout entraînement (réalisés : `python -m pytest tests -q`, 59 tests) : enregistrements disjoints, groupes patients disjoints, 201/202 ensemble, pas de stimulateur, mapping, fit des scalers refusé hors train, augmentation refusée hors train, formes de tous les modèles, pertes, centrage du pic R.
 
