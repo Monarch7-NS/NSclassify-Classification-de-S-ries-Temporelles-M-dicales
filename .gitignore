@@ -37,6 +37,7 @@ src/*.pdf
 # Outils d'assistance (notes locales, hors dépôt)
 .github/
 HANDOFF.md
+presentation/
 
 # IDE / OS
 .vscode/
