@@ -1,4 +1,4 @@
-# Environnements et caches Python
+﻿# Environnements et caches Python
 .venv/
 venv/
 __pycache__/
@@ -37,7 +37,6 @@ src/*.pdf
 # Outils d'assistance (notes locales, hors dépôt)
 .github/
 HANDOFF.md
-presentation/
 
 # IDE / OS
 .vscode/

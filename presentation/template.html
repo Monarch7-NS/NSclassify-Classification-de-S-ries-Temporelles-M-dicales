@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anas Draoui & Meriem Khedira — Projet 3 : séries temporelles médicales</title>
+<style>
+:root{
+  --bg:#f6f0e6; --card:#fffdf8; --ink:#232b3a; --mut:#6d7586; --line:#e8dfd0; --soft:#efe7d8;
+  --teal:#1f8a8a; --coral:#e4572e; --gold:#e9a23b; --plum:#7a5ea8; --slate:#8d99ae;
+  --N:#1f8a8a; --S:#e9a23b; --V:#e4572e; --F:#7a5ea8; --Q:#8d99ae;
+  --serif:Georgia,"Iowan Old Style","Times New Roman",serif; --sans:"Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);overflow-x:hidden;line-height:1.5}
+body::before{content:"";position:fixed;inset:0;z-index:-1;
+  background:radial-gradient(700px 500px at 92% 8%,#f3cfb455,transparent),radial-gradient(800px 600px at 4% 96%,#b9dcd655,transparent)}
+section{min-height:100vh;scroll-snap-align:start;padding:7vh 7vw 8vh;display:flex;flex-direction:column;justify-content:center;position:relative}
+.kicker{display:inline-flex;align-items:center;gap:.6rem;color:var(--teal);font-weight:700;font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;margin-bottom:.9rem}
+.kicker::before{content:"";width:2rem;height:2px;background:var(--teal)}
+h1,h2{font-family:var(--serif);font-weight:700;letter-spacing:-.015em;line-height:1.12}
+h1{font-size:clamp(2.6rem,5.6vw,4.8rem)}
+h2{font-size:clamp(1.7rem,3.2vw,2.7rem);max-width:24ch;margin-bottom:1.6rem}
+h1 em,h2 em{font-style:italic;color:var(--coral)}
+h3{font-size:1.08rem;font-weight:700;margin-bottom:.35rem}
+p{color:var(--mut)}
+.lead{font-size:1.1rem;max-width:58ch;margin:1.1rem 0 1.6rem}
+.grid{display:grid;gap:1.2rem}
+.c3{grid-template-columns:repeat(auto-fit,minmax(290px,1fr))}
+.c2{grid-template-columns:repeat(auto-fit,minmax(400px,1fr))}
+.c4{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.card{position:relative;background-color:var(--card);background-image:radial-gradient(320px circle at var(--mx,-400px) var(--my,-400px),#e9a23b22,transparent 65%);border:1px solid var(--line);border-radius:20px;padding:1.4rem;box-shadow:0 1px 0 #fff inset,0 14px 34px -18px #4a35201f}
+.num{font-family:var(--serif);font-size:2.4rem;line-height:1;color:var(--coral);font-style:italic;margin-bottom:.5rem}
+.card p{font-size:.93rem}
+.card p b,.lead b,.callout b{color:var(--ink)}
+.kpi .v{font-family:var(--serif);font-size:2.3rem;line-height:1.1}
+.kpi .l{font-size:.82rem;color:var(--mut)}
+.pill{display:inline-block;padding:.2rem .7rem;border-radius:99px;font-size:.76rem;font-weight:700;background:var(--soft);color:var(--ink);margin:.15rem .15rem .15rem 0}
+.pill.t{background:#d6ece9;color:#155e5e}.pill.c{background:#fadcd2;color:#9a3414}.pill.g{background:#f9e6c3;color:#8a5a0a}.pill.m{background:var(--soft);color:var(--mut)}
+.callout{border-left:3px solid var(--coral);background:#fbe9e1;border-radius:0 14px 14px 0;padding:.9rem 1.1rem;color:#6a3a2a;font-size:.95rem}
+.callout.t{border-color:var(--teal);background:#e1f0ed;color:#24545a}
+svg{width:100%;height:auto;display:block;overflow:visible}
+svg text{fill:var(--mut);font-size:11px;font-family:var(--sans)}
+.bar{transition:opacity .2s}.bar:hover{opacity:.78}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;font-size:.82rem;color:var(--mut);margin:.3rem 0 .7rem}
+.dot{display:inline-block;width:.65rem;height:.65rem;border-radius:50%;margin-right:.4rem}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{text-align:left;padding:.5rem .5rem;border-bottom:1px solid var(--line)}
+th{color:var(--mut);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em}
+td.n{text-align:right;font-variant-numeric:tabular-nums}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:.45rem}
+.tile{border-radius:11px;padding:.55rem 0;text-align:center;font-weight:700;font-size:.8rem;color:#fff}
+.tile.train{background:var(--teal)}.tile.val{background:var(--gold)}.tile.test{background:var(--coral)}.tile.exclu{background:#c9c1b2;color:#6b6456;text-decoration:line-through}
+.quote{font-family:var(--serif);font-size:clamp(1.7rem,3.6vw,3rem);line-height:1.25;max-width:26ch}
+.quote em{color:var(--coral)}
+.pbar{height:8px;border-radius:9px;background:var(--soft);overflow:hidden;margin-top:.7rem}
+.pbar i{display:block;height:100%;background:var(--teal);border-radius:9px}
+.nav{position:fixed;right:1.3rem;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:.7rem;z-index:9}
+.nav a{width:9px;height:9px;border-radius:50%;background:#d9cdb8;transition:.25s}
+.nav a.on{background:var(--coral);transform:scale(1.5)}
+.prog{position:fixed;top:0;left:0;height:3px;background:var(--coral);z-index:10;width:0}
+.foot{position:absolute;bottom:2.4vh;left:7vw;right:7vw;display:flex;justify-content:space-between;color:#a59d8d;font-size:.74rem}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:#fff;padding:.35rem .65rem;border-radius:8px;font-size:.78rem;display:none;z-index:20}
+.ecg{position:absolute;left:0;right:0;bottom:9vh;opacity:.55}
+.steps{list-style:none;display:grid;gap:.8rem;counter-reset:s;max-width:70ch}
+.steps li{counter-increment:s;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:.9rem 1rem .9rem 3.4rem;position:relative;color:var(--mut)}
+.steps li::before{content:counter(s);position:absolute;left:1rem;top:.8rem;width:1.6rem;height:1.6rem;border-radius:50%;background:var(--coral);color:#fff;display:grid;place-items:center;font-weight:700;font-size:.82rem}
+.steps li b{color:var(--ink)}
+
+/* ---------- motion layer (only active with html.fx) ---------- */
+.kicker,h1,h2,.lead{position:relative}
+.prog{background:linear-gradient(90deg,var(--teal),var(--coral));box-shadow:0 0 10px #e4572e88}
+.tile:hover{scale:1.15}
+.hint{position:absolute;left:7vw;bottom:3vh;font-size:.76rem;color:#a59d8d}
+.hint b{display:inline-block;animation:bob 1.6s ease-in-out infinite}
+section[data-n]::before{content:attr(data-n);position:absolute;right:5vw;top:3vh;font:italic 700 clamp(9rem,22vw,18rem)/1 var(--serif);color:transparent;-webkit-text-stroke:1.5px #e4572e2e;pointer-events:none;z-index:0}
+.fx body::before{display:none}
+.bg{position:fixed;inset:-10%;z-index:-1;pointer-events:none;overflow:hidden;translate:calc(var(--px,0)*-22px) calc(var(--py,0)*-22px);transition:translate .5s ease-out}
+.bg i{position:absolute;border-radius:50%;filter:blur(70px);will-change:transform}
+.bg i:nth-child(1){width:46vmax;height:46vmax;right:-8vmax;top:-10vmax;background:#f3b99a;opacity:.55;animation:drift1 22s ease-in-out infinite alternate}
+.bg i:nth-child(2){width:42vmax;height:42vmax;left:-10vmax;bottom:-12vmax;background:#9fd3cb;opacity:.55;animation:drift2 27s ease-in-out infinite alternate}
+.bg i:nth-child(3){width:26vmax;height:26vmax;left:42%;top:30%;background:#f6d9a0;opacity:.4;animation:drift3 31s ease-in-out infinite alternate}
+.fx .rv{opacity:0;translate:0 34px;transition:opacity .8s ease,translate .9s cubic-bezier(.2,.8,.2,1),transform .25s ease-out,box-shadow .3s;transition-delay:calc(var(--i,0)*90ms),calc(var(--i,0)*90ms),0s,0s}
+.fx section.in .rv{opacity:1;translate:0 0}
+.fx .card:hover{box-shadow:0 1px 0 #fff inset,0 26px 46px -20px #4a352038}
+.fx h1.rv,.fx h2.rv{filter:blur(9px);transition:opacity .8s ease,translate .9s cubic-bezier(.2,.8,.2,1),filter .9s ease;transition-delay:calc(var(--i,0)*90ms)}
+.fx section.in h1.rv,.fx section.in h2.rv{filter:blur(0)}
+.fx .kicker::before{width:0;transition:width .9s cubic-bezier(.2,.8,.2,1) .25s}
+.fx section.in .kicker::before{width:2rem}
+.fx h2 em{background:linear-gradient(var(--gold),var(--gold)) 0 96%/0% 3px no-repeat;transition:background-size .9s cubic-bezier(.2,.8,.2,1) .8s}
+.fx section.in h2 em{background-size:100% 3px}
+h1 em{display:inline-block;margin-left:.12em}
+.fx h1 em{background:linear-gradient(100deg,var(--coral),#f08a4b,var(--gold),var(--coral));background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;transform-origin:50% 65%;animation:shimmer 6s linear infinite,lubdub 1.7s ease-in-out infinite}
+.fx .nav a.on{animation:navpulse 1.6s ease-out infinite}
+.fx .w{display:inline-block;opacity:0;translate:0 .5em;filter:blur(8px);transition:opacity .6s,translate .7s cubic-bezier(.2,.8,.2,1),filter .6s;transition-delay:calc(var(--i)*55ms + .2s)}
+.fx section.in .w{opacity:1;translate:0 0;filter:blur(0)}
+.fx section[data-n]::before{translate:70px 0;opacity:0;transition:translate 1.3s cubic-bezier(.2,.8,.2,1),opacity 1.3s}
+.fx section.in[data-n]::before{translate:0 0;opacity:1}
+/* charts */
+.bar{transform-box:fill-box;transform-origin:50% 100%}
+#split-bar .bar{transform-origin:0 50%}
+#cls-donut .bar{transform-box:view-box;transform-origin:160px 125px}
+.fx section:not(.in) .bar{scale:1 0}
+.fx section:not(.in) #split-bar .bar{scale:0 1}
+.fx section:not(.in) #cls-donut .bar{scale:.5;opacity:0;rotate:-70deg}
+.fx section.in .bar{animation:growy .9s cubic-bezier(.2,.8,.2,1) calc(var(--i,0)*70ms + .45s) backwards}
+.fx section.in #split-bar .bar{animation-name:growx}
+.fx section.in #cls-donut .bar{animation-name:spin;animation-duration:1s}
+.hb .bar{transform-origin:0 50%}
+.fx section:not(.in) .hb .bar{scale:0 1}
+.fx section.in .hb .bar{animation-name:growx}
+.mic{height:50px;margin-bottom:.3rem}
+#models{grid-template-columns:repeat(3,1fr);gap:1rem}
+#models .card{padding:1rem 1.4rem}
+#models .mic{height:60px;width:100%;margin-bottom:.3rem}
+#models h3{font-size:1.25rem;margin-bottom:.2rem}
+#models .pill{font-size:.85rem;padding:.2rem .8rem}
+#models p{font-size:1.05rem;margin-top:.2rem!important}
+#s4 .callout{font-size:1.1rem;padding:.9rem 1.3rem;margin-top:1rem!important}
+.mic .node{transform-box:fill-box;transform-origin:center}
+.fx section:not(.in) .mic .node{scale:0}
+.fx section.in .mic .node{animation:pop .5s cubic-bezier(.3,1.7,.5,1) calc(var(--i,0)*45ms + .5s) backwards}
+.ul{list-style:none;display:grid;gap:.55rem;margin-top:.5rem}
+.ul li{position:relative;padding-left:1.4rem;color:var(--mut);font-size:.93rem}
+.ul li::before{content:"";position:absolute;left:0;top:.5rem;width:.6rem;height:.6rem;border-radius:50%;background:var(--teal)}
+.ul.neg li::before{background:var(--coral)}
+.ul li b{color:var(--ink)}
+.vs td:first-child{font-weight:600;color:var(--ink)}
+.fx .draw{stroke-dasharray:1;stroke-dashoffset:1}
+.fx section.in .draw{animation:draw var(--t,1.6s) cubic-bezier(.45,0,.2,1) var(--d,.4s) forwards}
+.fx section:not(.in) .late{opacity:0}
+.fx section.in .late{animation:fadeup .6s ease var(--d,1s) backwards}
+.dotp{transform-box:fill-box;transform-origin:center}
+.fx section:not(.in) .dotp{scale:0}
+.fx section.in .dotp{animation:pop .5s cubic-bezier(.3,1.7,.5,1) var(--d,1s) backwards}
+.ring{fill:none;stroke:var(--coral);stroke-width:1.5;transform-box:fill-box;transform-origin:center;opacity:0}
+.fx section.in .ring{animation:ripple 2.4s ease-out calc(var(--d,1s) + .6s) infinite}
+.fx .pbar i{transform-origin:0 50%}
+.fx section:not(.in) .pbar i{scale:0 1}
+.fx section.in .pbar i{animation:growx 1.4s cubic-bezier(.2,.8,.2,1) .7s backwards}
+.fx .tile{transition:background-color .6s,color .6s,scale .2s;transition-delay:calc(var(--i,0)*22ms + 1s),calc(var(--i,0)*22ms + 1s),0s}
+.fx .tile.train,.fx .tile.val,.fx .tile.test,.fx .tile.exclu{background:#e0d6c3;color:#a39a87}
+.fx section:not(.in) .tile{opacity:0}
+.fx section.in .tile{animation:pop .5s cubic-bezier(.3,1.6,.5,1) calc(var(--i,0)*22ms) backwards}
+.fx section.in .tile.train{background:var(--teal);color:#fff}
+.fx section.in .tile.val{background:var(--gold);color:#fff}
+.fx section.in .tile.test{background:var(--coral);color:#fff}
+.fx section.in .tile.exclu{background:#c9c1b2;color:#6b6456}
+.glow{filter:drop-shadow(0 0 7px #e4572e)}
+@keyframes growy{from{scale:1 0}}
+@keyframes growx{from{scale:0 1}}
+@keyframes spin{from{scale:.5;opacity:0;rotate:-70deg}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadeup{from{opacity:0;translate:0 8px}}
+@keyframes pop{from{scale:.2;opacity:0}}
+@keyframes ripple{0%{scale:1;opacity:.85}100%{scale:3.4;opacity:0}}
+@keyframes lubdub{0%,100%{scale:1}14%{scale:1.09}28%{scale:1}42%{scale:1.05}70%{scale:1}}
+@keyframes shimmer{to{background-position:-250% 0}}
+@keyframes navpulse{0%{box-shadow:0 0 0 0 #e4572e77}100%{box-shadow:0 0 0 10px #e4572e00}}
+@keyframes bob{0%,100%{translate:0 0}50%{translate:0 5px}}
+@keyframes drift1{to{transform:translate(-9vmax,12vmax) scale(1.15)}}
+@keyframes drift2{to{transform:translate(12vmax,-9vmax) scale(1.1)}}
+@keyframes drift3{to{transform:translate(-14vmax,8vmax) scale(1.3)}}
+</style>
+</head>
+<body>
+<div class="prog" id="prog"></div><div class="nav" id="nav"></div><div class="tip" id="tip"></div>
+
+<section id="s0">
+  <div class="kicker">Projet 3 · DATA931</div>
+  <h1>Classification de séries temporelles <em>médicales</em></h1>
+  <div style="margin-top:1.4rem"><span class="pill t" style="font-size:1rem;padding:.4rem 1.1rem">Anas Draoui</span><span class="pill c" style="font-size:1rem;padding:.4rem 1.1rem">Meriem Khedira</span></div>
+  <svg class="ecg" viewBox="0 0 1200 110" preserveAspectRatio="none" id="pulse"></svg>
+</section>
+
+<section id="s1" data-n="01" style="padding-top:4vh;padding-bottom:6vh">
+  <div class="kicker">Diapositive 1 · Prétraitement et segmentation</div>
+  <h2 style="max-width:none;margin-bottom:1rem">Comment on rend le signal ECG <em>propre et exploitable</em>&nbsp;?</h2>
+  <div class="grid" style="grid-template-columns:minmax(0,1fr) minmax(0,1.7fr);align-items:start">
+    <div class="card"><h3>Le nettoyage de la donnée</h3>
+      <p style="margin-bottom:.6rem"><b>On enlève le bruit (filtrage)</b> : on applique un filtre pour ne garder que la vraie activité du cœur (<b>entre 0,5 et 40&nbsp;Hz</b>).</p>
+      <p><b>Normalisation</b> : on applique un <b>Z-score</b> sur chaque battement pour comparer la forme, pas la hauteur brute.</p></div>
+    <div class="card"><h3>Ce que le modèle doit trouver</h3>
+      <div class="legend"><span><span class="dot" style="background:var(--teal)"></span>normal (0)</span><span><span class="dot" style="background:var(--coral)"></span>anormal (1)</span></div>
+      <div class="grid" style="gap:.8rem;grid-template-columns:1fr 1fr">
+        <div><svg viewBox="0 0 520 190" id="p-normal"></svg><p id="p-normal-cap"></p></div>
+        <div><svg viewBox="0 0 520 190" id="p-abnormal"></svg><p id="p-abnormal-cap"></p></div>
+      </div></div>
+  </div>
+  <h3 style="font-family:var(--serif);font-size:1.5rem;margin:1.2rem 0 .8rem">Qu'est-ce qu'on donne exactement <em style="color:var(--coral)">à manger</em> au modèle&nbsp;?</h3>
+  <div class="grid c2">
+    <div class="card"><h3>Une « photo » de 1 seconde par battement</h3>
+      <p>On coupe une fenêtre de <b>360 points</b> (0,5 s avant le pic du cœur, 0,5 s après). C'est la « signature visuelle » d'un battement.</p>
+      <svg viewBox="0 0 520 270" id="p-window" style="margin-top:.6rem"></svg></div>
+    <div class="card"><h3>Le rythme du cœur (Intervalles RR)</h3>
+      <p>La forme ne suffit pas ! On calcule aussi le temps entre deux battements — <span class="pill c">rr_pre</span><span class="pill c">rr_post</span><span class="pill c">rr_ratio</span></p>
+      <svg viewBox="0 0 520 220" id="p-rr" style="margin-top:.6rem"></svg></div>
+  </div>
+  <div class="callout" style="margin-top:1.2rem"><b>Pourquoi&nbsp;?</b> Une anomalie peut avoir une <b>forme normale</b>, mais arriver <b>trop tôt</b> par rapport aux autres battements.</div>
+</section>
+
+<section id="s3" data-n="02">
+  <div class="kicker">Diapositive 2 · Le découpage anti-triche (Validation)</div>
+  <h2>Comment on s'assure que le modèle <em>ne triche pas</em>&nbsp;?</h2>
+  <div class="grid c2">
+    <div class="card"><h3>Règle d'or <span style="color:var(--mut);font-weight:400">(Split par patient)</span></h3>
+      <p>Un battement du patient A qui sert à l'entraînement ne doit <b>jamais</b> se retrouver dans le test.</p>
+      <div class="callout" style="margin:.8rem 0 0"><b>Sinon</b>, le modèle apprend par cœur le cœur du patient A au lieu d'apprendre la maladie.</div></div>
+    <div class="grid" style="align-content:start">
+      <div class="card"><h3>3 jeux de données séparés</h3>
+        <div class="grid" id="split-kpi" style="grid-template-columns:repeat(3,1fr);margin:.8rem 0 0"></div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:1.2rem"><h3>Le protocole de partitionnement de Chazal et al.</h3><p>Référence standard en classification d'ECG : partition <b>DS1 / DS2 sans aucun patient commun</b>, pour éviter les fuites de données entre les patients.</p></div>
+</section>
+
+<section id="s4" data-n="03">
+  <div class="kicker">Diapositive 3 · Les modèles</div>
+  <h2 style="max-width:none">Six modèles, <em>une même question</em>&nbsp;: normal ou anormal&nbsp;?</h2>
+  <div class="grid c3" id="models"></div>
+  <div class="callout t" style="margin-top:1.3rem"><b>Binaire&nbsp;:</b> un seuil, une métrique (PR-AUC), des runs courts, donc <b id="n-exp"></b> expériences comparables.</div>
+</section>
+
+<section id="s5" data-n="04">
+  <div class="kicker">Diapositive 4 · Étude 1 : comparer les familles</div>
+  <h2 style="max-width:none">Le classement, puis <em>l'endroit où tout casse</em></h2>
+  <div class="grid c2">
+    <div class="card"><h3>PR-AUC sur le test</h3>
+      <p style="margin-bottom:.4rem">3 seeds, moyenne ± écart-type. Tirer au hasard donne la prévalence, <b id="prev1"></b>.</p>
+      <div class="legend"><span><span class="dot" style="background:#8d99ae"></span>modèle classique</span><span><span class="dot" style="background:var(--teal)"></span>réseau</span><span><span class="dot" style="background:var(--plum)"></span>LSTM</span></div>
+      <svg id="s1-bars"></svg></div>
+    <div class="card"><h3>Le rappel selon le type de patient</h3>
+      <p style="margin-bottom:.4rem">Part des battements anormaux retrouvés.</p>
+      <div class="legend"><span><span class="dot" style="background:var(--coral)"></span>4 patients à bloc de branche</span><span><span class="dot" style="background:var(--teal)"></span>les 19 autres</span></div>
+      <svg id="s1-bbb" viewBox="0 0 520 270"></svg></div>
+  </div>
+  <div class="callout" id="s1-call" style="margin-top:1.2rem"></div>
+</section>
+
+<section id="s6" data-n="05">
+  <div class="kicker">Diapositive 5 · Étude 2 : on change les réglages</div>
+  <h2 style="max-width:none">Régler les hyperparamètres <em>sans tricher</em></h2>
+  <div class="grid c2" style="align-items:start">
+    <div>
+      <ol class="steps" style="max-width:none">
+        <li><b>Validation croisée par patient</b> : 5 plis sur 21 patients.</li>
+        <li><b>Réglages</b> : weight decay, dropout, learning rate, C, profondeur.</li>
+        <li><b>Seuil</b> figé hors test (max-F1 out-of-fold).</li>
+        <li><b>Réentraînement</b> sur 21 patients, 5 seeds.</li>
+      </ol>
+      <div class="grid" id="s2-kpi" style="grid-template-columns:repeat(3,1fr);margin-top:1.1rem"></div>
+    </div>
+    <div class="card"><h3>PR-AUC test : étude 1 contre étude 2</h3>
+      <div class="legend"><span><span class="dot" style="background:#c9c1b2"></span>étude 1</span><span><span class="dot" style="background:var(--teal)"></span>étude 2</span></div>
+      <svg id="s2-pairs" viewBox="0 0 520 270"></svg>
+      <div class="callout t" id="s2-call" style="margin-top:.8rem"></div></div>
+  </div>
+</section>
+
+<section id="s7" data-n="06">
+  <div class="kicker">Diapositive 6 · La mémoire récurrente</div>
+  <h2 style="max-width:none">Le LSTM et le CNN-LSTM <em>en valaient-ils la peine</em>&nbsp;?</h2>
+  <div class="grid c3" id="lstm-cards"></div>
+  <div class="callout t" id="lstm-call" style="margin-top:1.2rem"></div>
+</section>
+
+<section id="s8" data-n="07">
+  <div class="kicker">Diapositive 7 · Avantages et contraintes</div>
+  <h2 style="max-width:none">Ce que le projet <em>a permis</em>, ce qu'il <em>a coûté</em></h2>
+  <div class="grid c2">
+    <div class="card"><h3>Avantages</h3><ul class="ul">
+      <li><b>Problème binaire</b> : un seuil, une PR-AUC, des runs courts.</li>
+      <li><b>Protocole strict</b> : split par patient, seuil figé avant le test.</li>
+      <li><b>Tout est scripté</b> : seeds, index, reprise après coupure.</li>
+      <li><b>Parallélisation</b> sur 16 CPU.</li></ul></div>
+    <div class="card"><h3>Contraintes</h3><ul class="ul neg">
+      <li><b>Temps court</b> : 6 h / 2 jours, grilles de 4 à 7 réglages.</li>
+      <li><b>CPU seulement</b> : 16 cœurs saturés pendant des heures.</li>
+      <li><b>Peu d'expérience en deep learning</b> : choisir parmi les architectures et réglages a été difficile.</li>
+      <li><b>Test relu trois fois</b> : à divulguer.</li></ul></div>
+  </div>
+  <div class="grid" id="cost-kpi" style="grid-template-columns:repeat(3,1fr);margin-top:1.3rem"></div>
+</section>
+
+<section id="s9" data-n="08">
+  <div class="kicker">Diapositive 8 · Bénéfices et conclusion</div>
+  <div class="quote" id="concl-quote"></div>
+  <div class="grid c3" id="concl-cards" style="margin-top:1.8rem"></div>
+</section>
+
+<script>
+const DATA = /*__DATA__*/null;
+const RES = /*__RES__*/null;
+const CL=['N','S','V','F','Q'];
+const COL={N:'#1f8a8a',S:'#e9a23b',V:'#e4572e',F:'#7a5ea8',Q:'#8d99ae'};
+const NAMES={N:'Normal / blocs de branche',S:'Supraventriculaire',V:'Ventriculaire',F:'Fusion',Q:'Inconnu / stimulé'};
+const TEAL='#1f8a8a',CORAL='#e4572e',GOLD='#e9a23b',GRID='#e8dfd0';
+const $=id=>document.getElementById(id), fmt=n=>n.toLocaleString('fr-FR'), NS='http://www.w3.org/2000/svg', tip=$('tip');
+function el(p,t,a={},txt){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(txt!=null)e.textContent=txt;p.appendChild(e);return e}
+function hover(e,m){e.addEventListener('mousemove',v=>{tip.style.display='block';tip.innerHTML=m;tip.style.left=v.clientX+14+'px';tip.style.top=v.clientY+14+'px'});e.addEventListener('mouseleave',()=>tip.style.display='none')}
+function kpi(host,items){$(host).innerHTML=items.map(([v,l,c])=>`<div class="kpi"><div class="v" style="${c?'color:'+c:''}">${v}</div><div class="l">${l}</div></div>`).join('')}
+// line plot in a box {x,y,w,h}; series [{y,color,width,dash}]; shared range unless ymin/ymax given
+function plot(svg,box,series,o={}){const all=series.flatMap(s=>s.y),mn=o.ymin??Math.min(...all),mx=o.ymax??Math.max(...all),n=Math.max(...series.map(s=>s.y.length));
+const X=i=>box.x+i/(n-1)*box.w,Y=v=>box.y+box.h-(v-mn)/(mx-mn||1)*box.h;
+if(o.grid)for(let k=0;k<=o.grid;k++)el(svg,'line',{x1:box.x+k*box.w/o.grid,x2:box.x+k*box.w/o.grid,y1:box.y,y2:box.y+box.h,stroke:GRID});
+series.forEach(s=>el(svg,'path',{d:'M'+s.y.map((v,i)=>X(i).toFixed(1)+' '+Y(v).toFixed(1)).join('L'),fill:'none',stroke:s.color,'stroke-width':s.width||1.6,'stroke-linejoin':'round','stroke-dasharray':s.dash||'',opacity:s.op??1}));
+return {X,Y,mn,mx,n}}
+
+const total=CL.reduce((s,c)=>s+DATA.totals[c],0);
+
+// title ECG line
+(()=>{const s=$('pulse');let d='M0 60';for(let x=0;x<=1200;x+=200)d+=`L${x+40} 60 L${x+60} 52 L${x+80} 60 L${x+100} 60 L${x+110} 68 L${x+122} 6 L${x+136} 96 L${x+146} 60 L${x+190} 60 L${x+205} 44 L${x+225} 60`;
+el(s,'path',{d,fill:'none',stroke:CORAL,'stroke-width':2.4,'stroke-linejoin':'round'})})();
+// intro : battement normal vs anormal
+(()=>{const d=DATA.nva;if(!d)return;
+const all=[...d.normal.y,...d.abnormal.y],mn=Math.min(...all),mx=Math.max(...all);
+[['p-normal',d.normal,'p-normal-cap','Rythme régulier : battements de même forme, séparés par des intervalles quasi égaux.'],
+ ['p-abnormal',d.abnormal,'p-abnormal-cap','Battements ventriculaires prématurés : forme large et déformée, arrivée plus tôt que prévu.']].forEach(([id,s,cap,txt])=>{
+const svg=$(id),B={x:6,y:14,w:508,h:150},g=plot(svg,B,[{y:s.y,color:TEAL,width:1.8}],{ymin:mn,ymax:mx,grid:6});
+s.peaks.forEach(p=>{const ab=p.sym!=='N',x=g.X(p.x),y=g.Y(s.y[Math.min(p.x,s.y.length-1)]);
+el(svg,'circle',{cx:x,cy:y,r:ab?6:3.5,fill:ab?CORAL:TEAL});
+if(ab)el(svg,'text',{x:x+9,y:y+4,style:'fill:#e4572e;font-weight:700'},'anormal')});
+el(svg,'text',{x:B.x+B.w/2,y:B.y+B.h+22,'text-anchor':'middle'},'6 secondes d\u2019enregistrement (patient '+s.record+')');
+$(cap).textContent=txt})})();
+
+// 2 window
+(()=>{const s=$('p-window'),y=DATA.norm[1].z,B={x:10,y:30,w:500,h:190};
+const g=plot(s,B,[{y,color:TEAL,width:2}]);
+const c=g.X((y.length-1)/2);
+el(s,'rect',{x:B.x,y:B.y,width:B.w,height:B.h,fill:TEAL,opacity:.06,rx:6});
+el(s,'line',{x1:c,x2:c,y1:B.y,y2:B.y+B.h,stroke:CORAL,'stroke-dasharray':'4 4'});
+el(s,'text',{x:c+6,y:B.y+12,style:'fill:#e4572e;font-weight:700'},'pic R');
+const by=B.y+B.h+16;
+[[B.x,c,'0,5 s · 180 pts'],[c,B.x+B.w,'0,5 s · 180 pts']].forEach(([a,b,t])=>{el(s,'path',{d:`M${a+2} ${by-6}V${by}H${b-2}V${by-6}`,fill:'none',stroke:'#6d7586'});el(s,'text',{x:(a+b)/2,y:by+16,'text-anchor':'middle'},t)});
+el(s,'text',{x:B.x+B.w/2,y:16,'text-anchor':'middle',style:'font-weight:700;fill:#232b3a;font-size:12px'},'fenêtre de 360 points = 1 seconde')})();
+// 2 RR
+(()=>{const r=DATA.rr,s=$('p-rr');if(!r)return;
+const B={x:10,y:60,w:500,h:140},g=plot(s,B,[{y:r.y,color:TEAL,width:1.8}]);
+r.peaks.forEach(p=>{const V=p.sym==='V',yy=g.Y(r.y[Math.min(p.x,r.y.length-1)]);el(s,'circle',{cx:g.X(p.x),cy:yy,r:V?5.5:3.5,fill:V?CORAL:TEAL});
+if(V)el(s,'text',{x:g.X(p.x)+10,y:yy+4,style:'fill:#e4572e;font-weight:700'},'V (ectopique)')});
+const arrow=(i,j,label,color)=>{const a=g.X(r.peaks[i].x),b=g.X(r.peaks[j].x),y=38;el(s,'line',{x1:a,x2:b,y1:y,y2:y,stroke:color,'stroke-width':2});
+[a,b].forEach(x=>el(s,'line',{x1:x,x2:x,y1:y-5,y2:y+5,stroke:color,'stroke-width':2}));el(s,'text',{x:(a+b)/2,y:y-9,'text-anchor':'middle',style:`fill:${color};font-weight:700;font-size:12px`},label)};
+arrow(2,3,'rr_pre '+r.pre.toFixed(2)+' s',CORAL);arrow(3,4,'rr_post '+r.post.toFixed(2)+' s',TEAL)})();
+
+// 3 validation
+(()=>{const col={train:TEAL,val:GOLD,test:CORAL};
+const sets=[['train','Train (DS1)','~40 000','pour entraîner le modèle'],['val','Validation (DS1)','~10 000','pour régler les paramètres sur des patients inconnus'],['test','Test (DS2)','~50 000','l\'examen final sur de nouveaux patients']];
+$('split-kpi').innerHTML=sets.map(([k,n,v,d])=>`<div class="kpi" style="border-top:4px solid ${col[k]};padding-top:.5rem"><div class="v" style="color:${col[k]};font-size:1.7rem">${v}</div><div class="l"><b style="color:var(--ink)">${n}</b><br>${d} (${v} battements)</div></div>`).join('')})();
+
+// ================= diapositives 3 à 8 : résultats des études =================
+const f3=x=>x.toFixed(3).replace('.',','),f2=x=>x.toFixed(2).replace('.',','),pc=x=>Math.round(100*x)+'\u202f%';
+const S1=Object.fromEntries(RES.s1.map(r=>[r.k,r])),S2=Object.fromEntries(RES.s2.map(r=>[r.k,r]));
+const LAB=Object.fromEntries(RES.s1.map(r=>[r.k,r.label]));
+const FCOL={lr:'#8d99ae',rf:'#8d99ae',lstm:'#7a5ea8',mlp:TEAL,cnn:TEAL,cnn_lstm:TEAL};
+
+// barres horizontales avec barres d'erreur ; rows [{label,v,sd,color,tip}]
+function hbars(id,rows,o){const svg=$(id),W=520,L=122,R=46,rh=40,H=rows.length*rh+30,X=v=>L+v/o.max*(W-L-R);
+svg.setAttribute('viewBox',`0 0 ${W} ${H}`);svg.classList.add('hb');
+for(let k=0;k<=4;k++){const v=o.max*k/4;el(svg,'line',{x1:X(v),x2:X(v),y1:4,y2:H-24,stroke:GRID});el(svg,'text',{x:X(v),y:H-8,'text-anchor':'middle'},f2(v))}
+rows.forEach((r,i)=>{const y=8+i*rh,mid=y+rh/2-2;
+el(svg,'text',{x:L-10,y:mid+4,'text-anchor':'end',style:'fill:#232b3a;font-size:12.5px;font-weight:600'},r.label);
+const b=el(svg,'rect',{x:L,y:y+6,width:X(r.v)-L,height:rh-18,rx:6,fill:r.color,class:'bar',style:`--i:${i}`});hover(b,r.tip);
+const d=`--d:${1+i*.08}s`;
+if(r.sd){const a=X(r.v-r.sd),c=X(r.v+r.sd);el(svg,'line',{x1:a,x2:c,y1:mid,y2:mid,stroke:'#232b3a','stroke-width':1.6,class:'late',style:d});
+[a,c].forEach(x=>el(svg,'line',{x1:x,x2:x,y1:mid-5,y2:mid+5,stroke:'#232b3a','stroke-width':1.6,class:'late',style:d}))}
+el(svg,'text',{x:X(r.v+(r.sd||0))+9,y:mid+4,class:'late',style:d+';fill:#232b3a;font-weight:700;font-size:12px'},f3(r.v))});
+if(o.chance!=null){el(svg,'line',{x1:X(o.chance),x2:X(o.chance),y1:2,y2:H-24,stroke:CORAL,'stroke-dasharray':'5 4','stroke-width':1.6,class:'late',style:'--d:1.4s'});
+el(svg,'text',{x:X(o.chance)+4,y:H-8,class:'late',style:'--d:1.4s;fill:#e4572e;font-weight:700'},'hasard')}}
+
+// barres verticales groupées ; groups [{label,v:[..],sd:[..]}], ser [{name,color}]
+function pairs(id,groups,ser,o){const svg=$(id),W=520,H=270,L=34,T=16,B=34,w=W-L-4,h=H-T-B,Y=v=>T+h-v/o.max*h,gw=w/groups.length,bw=Math.min(34,gw*.34);
+for(let v=0;v<=o.max+1e-9;v+=o.step){el(svg,'line',{x1:L,x2:W-4,y1:Y(v),y2:Y(v),stroke:GRID});el(svg,'text',{x:L-6,y:Y(v)+4,'text-anchor':'end'},o.pct?Math.round(100*v)+' %':f2(v))}
+groups.forEach((g,i)=>{const cx=L+gw*(i+.5);
+el(svg,'text',{x:cx,y:H-12,'text-anchor':'middle',style:'fill:#232b3a;font-weight:600;font-size:11.5px'},g.label);
+ser.forEach((s,j)=>{const v=g.v[j];if(v==null)return;const x=cx+(j-(ser.length-1)/2)*(bw+5)-bw/2,k=i*ser.length+j;
+const b=el(svg,'rect',{x,y:Y(v),width:bw,height:Y(0)-Y(v),rx:5,fill:s.color,class:'bar',style:`--i:${k}`});hover(b,`<b>${g.label}</b> · ${s.name}<br>${f3(v)}${g.sd&&g.sd[j]?' \u00b1 '+f3(g.sd[j]):''}`);
+const sd=g.sd&&g.sd[j];const d=`--d:${1.1+k*.05}s`;
+if(sd){[[Y(v-sd),Y(v+sd)]].forEach(([a,c])=>{el(svg,'line',{x1:x+bw/2,x2:x+bw/2,y1:a,y2:c,stroke:'#232b3a','stroke-width':1.5,class:'late',style:d})})}
+el(svg,'text',{x:x+bw/2,y:Y(v+(sd||0))-6,'text-anchor':'middle',class:'late',style:d+';fill:#232b3a;font-weight:700;font-size:10.5px'},o.pct?Math.round(100*v)+' %':f2(v))})});
+if(o.chance!=null){el(svg,'line',{x1:L,x2:W-4,y1:Y(o.chance),y2:Y(o.chance),stroke:CORAL,'stroke-dasharray':'5 4','stroke-width':1.6,class:'late',style:'--d:1.5s'});
+el(svg,'text',{x:L+4,y:Y(o.chance)-5,class:'late',style:'--d:1.5s;fill:#e4572e;font-weight:700'},'hasard '+f3(o.chance))}}
+
+// icônes de modèles (viewBox 220x64)
+function icon(svg,k){const N=(t,a)=>el(svg,t,Object.assign({class:'node'},a)),P=(d,a)=>el(svg,'path',Object.assign({d,fill:'none','stroke-linecap':'round','stroke-linejoin':'round'},a));
+const wave=(x0,y0,w,amp)=>{let d='M'+x0+' '+y0;for(let i=1;i<=40;i++){const x=x0+w*i/40,t=i/40;d+=`L${x.toFixed(1)} ${(y0-amp*(Math.exp(-Math.pow((t-.35)*16,2))*1-.25*Math.exp(-Math.pow((t-.2)*30,2))+.28*Math.exp(-Math.pow((t-.7)*9,2)))).toFixed(1)}`}return d};
+const box=(x,y,w,h,c,i)=>N('rect',{x,y,width:w,height:h,rx:6,fill:c,opacity:.9,style:`--i:${i}`});
+const arr=(x1,x2,y)=>el(svg,'path',{d:`M${x1} ${y}H${x2}M${x2-5} ${y-4}L${x2} ${y}L${x2-5} ${y+4}`,fill:'none',stroke:'#6d7586','stroke-width':1.5,class:'late',style:'--d:1.2s'});
+if(k==='lr'){[18,34,52,70,40,86].forEach((x,i)=>N('circle',{cx:x,cy:52-(i%3)*3,r:4.5,fill:TEAL,style:`--i:${i}`}));[134,152,170,188,204,160].forEach((x,i)=>N('circle',{cx:x,cy:12+(i%3)*3,r:4.5,fill:CORAL,style:`--i:${i+6}`}));
+P('M8 56C90 56 120 8 212 8',{stroke:GOLD,'stroke-width':2.6,pathLength:1,class:'draw',style:'--d:.9s'})}
+else if(k==='rf'){[38,110,182].forEach((tx,t)=>{const i0=t*5;
+[[tx-18,32],[tx+18,32]].forEach(([x,y])=>P(`M${tx} 10L${x} ${y}`,{stroke:'#8d99ae','stroke-width':1.6}));
+[[tx-28,56],[tx-8,56]].forEach(([x,y])=>P(`M${tx-18} 32L${x} ${y}`,{stroke:'#8d99ae','stroke-width':1.6}));
+N('circle',{cx:tx,cy:10,r:5,fill:'#6d7586',style:`--i:${i0}`});N('circle',{cx:tx-18,cy:32,r:4,fill:'#8d99ae',style:`--i:${i0+1}`});N('circle',{cx:tx+18,cy:32,r:4,fill:CORAL,style:`--i:${i0+2}`});
+N('circle',{cx:tx-28,cy:56,r:3.5,fill:TEAL,style:`--i:${i0+3}`});N('circle',{cx:tx-8,cy:56,r:3.5,fill:CORAL,style:`--i:${i0+4}`})})}
+else if(k==='mlp'){const cols=[[3,26],[4,78],[4,130],[1,182]],pos=(n,x,j)=>[x,32+(j-(n-1)/2)*14];
+for(let c=0;c<3;c++)for(let a=0;a<cols[c][0];a++)for(let b=0;b<cols[c+1][0];b++){const[p,q]=pos(cols[c][0],cols[c][1],a),[r,s]=pos(cols[c+1][0],cols[c+1][1],b);el(svg,'line',{x1:p,y1:q,x2:r,y2:s,stroke:'#8d99ae',opacity:.35})}
+cols.forEach(([n,x],c)=>{for(let j=0;j<n;j++){const[px,py]=pos(n,x,j);N('circle',{cx:px,cy:py,r:5,fill:c===3?CORAL:TEAL,style:`--i:${c*3+j}`})}})}
+else if(k==='cnn'){P(wave(8,40,204,28),{stroke:TEAL,'stroke-width':2});
+const r=el(svg,'rect',{x:8,y:6,width:44,height:54,rx:6,fill:TEAL,opacity:.14,stroke:TEAL,'stroke-width':1.5});
+const a=el(svg,'animate',{attributeName:'x',values:'8;168;8',dur:'5s',repeatCount:'indefinite',calcMode:'spline',keySplines:'.4 0 .2 1;.4 0 .2 1',keyTimes:'0;.5;1'});r.appendChild(a)}
+else if(k==='cnn_lstm'){P(wave(6,40,70,26),{stroke:TEAL,'stroke-width':2});
+const r=el(svg,'rect',{x:6,y:8,width:26,height:50,rx:5,fill:TEAL,opacity:.14,stroke:TEAL,'stroke-width':1.4});r.appendChild(el(svg,'animate',{attributeName:'x',values:'6;50;6',dur:'4s',repeatCount:'indefinite'}));
+arr(86,106,34);[0,1,2].forEach(i=>{box(112+i*34,20,26,28,TEAL,i);if(i<2)arr(139+i*34,145+i*34,34)})}
+else if(k==='lstm'){[0,1,2,3].forEach(i=>{box(10+i*54,18,38,30,'#7a5ea8',i);if(i<3)arr(50+i*54,62+i*54,33)});P('M29 18C29 4 79 4 79 18',{stroke:'#7a5ea8','stroke-width':1.4,'stroke-dasharray':'3 3',opacity:.7})}}
+
+// --- diapositive 3 : les modèles
+(()=>{const M=[['lr','Régression logistique',['descripteurs','linéaire'],'Le plancher de référence.'],
+['rf','Forêt aléatoire',['descripteurs','non linéaire'],'Des arbres qui votent.'],
+['mlp','MLP',['fenêtre + RR','couches denses'],'Lit les 360 points sans ordre.'],
+['cnn','CNN 1D',['fenêtre + RR','filtres'],'Détecte les formes locales.'],
+['cnn_lstm','CNN-LSTM',['fenêtre + RR','forme + séquence'],'Formes, puis enchaînement.'],
+['lstm','LSTM',['séquence + RR','mémoire'],'Lit battement par battement.']];
+$('models').innerHTML=M.map(([k,t,p,d])=>`<div class="card"><svg class="mic" viewBox="0 0 220 64" id="ic-${k}"></svg><h3>${t}</h3><div>${p.map((x,i)=>`<span class="pill ${k==='lstm'?'m':i?'g':'t'}">${x}</span>`).join('')}</div><p style="margin-top:.4rem">${d}</p></div>`).join('');
+M.forEach(([k])=>icon($('ic-'+k),k));
+$('n-exp').textContent=fmt(RES.cnt.exp_study1+RES.cnt.runs_e2+RES.cnt.finals_e2)})();
+
+// --- diapositive 4 : étude 1
+(()=>{$('prev1').textContent=f3(RES.prev);
+const rows=[...RES.s1].sort((a,b)=>b.pr-a.pr).map(r=>({label:r.label,v:r.pr,sd:r.sd,color:FCOL[r.k],tip:`<b>${r.label}</b><br>PR-AUC ${f3(r.pr)} \u00b1 ${f3(r.sd)}<br>F1 ${f3(r.f1)} · rappel ${f3(r.sens)} · précision ${f3(r.prec)}`}));
+hbars('s1-bars',rows,{max:.8,chance:RES.prev});
+const order=['lr','rf','lstm','mlp','cnn','cnn_lstm'].filter(k=>RES.bbb.recall1[k]);
+pairs('s1-bbb',order.map(k=>({label:LAB[k].replace(' (Meriem)','').replace(' 1D',''),v:[RES.bbb.recall1[k].bbb,RES.bbb.recall1[k].other]})),[{name:'bloc de branche',color:CORAL},{name:'autres patients',color:TEAL}],{max:1,step:.25,pct:true});
+const r1=RES.bbb.recall1,hi=order.filter(k=>k!=='cnn_lstm'),lo=Math.min(...hi.map(k=>r1[k].bbb)),hh=Math.max(...hi.map(k=>r1[k].bbb));
+$('s1-call').innerHTML=`<b>Quatre patients portent ${pc(RES.bbb.share)} des anomalies du test.</b> Cinq familles sur six les ratent (rappel ${pc(lo)} à ${pc(hh)}). Le CNN-LSTM les retrouve (${pc(r1.cnn_lstm.bbb)}) mais sa spécificité tombe à ${f2(S1.cnn_lstm.spec)}.`})();
+
+// --- diapositive 5 : étude 2
+(()=>{const cv=RES.cv,nCfg=Object.values(cv).reduce((s,c)=>s+c.n,0);
+kpi('s2-kpi',[['21','patients, 5 plis',TEAL],[String(RES.cnt.runs_e2>=135?135:RES.cnt.runs_e2),'runs de recherche (27 réglages × 5 plis)',CORAL],[(S2.cnn.pr>=S1.cnn.pr?'+':'')+f2(S2.cnn.pr-S1.cnn.pr),'de PR-AUC pour le CNN entre les deux études',GOLD]]);
+const ord=['lr','rf','mlp','cnn','cnn_lstm'].filter(k=>S2[k]);
+pairs('s2-pairs',ord.map(k=>({label:LAB[k].replace(' 1D',''),v:[S1[k].pr,S2[k].pr],sd:[S1[k].sd,S2[k].sd]})),[{name:'étude 1',color:'#c9c1b2'},{name:'étude 2',color:TEAL}],{max:.8,step:.2,chance:RES.prev});
+const gaps=ord.map(k=>cv[k].best-cv[k].worst),sds=ord.map(k=>cv[k].sd_mean),R2=RES.bbb.recall2,R1=RES.bbb.recall1;
+$('s2-call').innerHTML=`<b>CNN&nbsp;:</b> ${f3(S1.cnn.pr)} \u2192 ${f3(S2.cnn.pr)}. <b>MLP&nbsp;:</b> ${f3(S1.mlp.pr)} \u2192 ${f3(S2.mlp.pr)}. <b>Limite&nbsp;:</b> 5 patients de plus à l\u2019entraînement, réglages et données ne sont pas séparables.`})();
+
+// --- diapositive 6 : LSTM / CNN-LSTM
+(()=>{const C=RES.cost1,R=RES.bbb.recall1,ks=['cnn','cnn_lstm','lstm'];
+$('lstm-cards').innerHTML=ks.map(k=>{const a=S1[k],b=S2[k],c=C[k];
+return `<div class="card"><h3>${LAB[k]}</h3><table class="vs"><tr><td>PR-AUC test, étude 1</td><td class="n">${f3(a.pr)} \u00b1 ${f3(a.sd)}</td></tr>
+<tr><td>PR-AUC test, étude 2</td><td class="n">${b?f3(b.pr)+' \u00b1 '+f3(b.sd):'\u2014'}</td></tr>
+<tr><td>F1, étude 2</td><td class="n">${b?f3(b.f1):'\u2014'}</td></tr>
+<tr><td>Précision, étude 2</td><td class="n">${b?f3(b.prec):'\u2014'}</td></tr>
+<tr><td>Sensibilité, étude 2</td><td class="n">${b?f3(b.sens):'\u2014'}</td></tr>
+<tr><td>Spécificité, étude 2</td><td class="n">${b?f3(b.spec):'\u2014'}</td></tr>
+<tr><td>Paramètres</td><td class="n">${fmt(c.params)}</td></tr>
+<tr><td>Entraînement</td><td class="n">${Math.round(c.train_s/60)}\u202fmin</td></tr>
+<tr><td>Rappel blocs de branche</td><td class="n">${pc(R[k].bbb)}</td></tr></table></div>`}).join('');
+const A=S1.cnn,B=S2.cnn,CL1=S1.cnn_lstm,CL2=S2.cnn_lstm,LS=S1.lstm,CC=RES.cost1;
+$('lstm-call').innerHTML=`<b>Non, pas dans notre budget.</b> Le CNN fait mieux (${f3(A.pr)} puis ${f3(B.pr)} contre ${f3(CL1.pr)} puis ${f3(CL2.pr)}) et s\u2019entraîne en ${Math.round(CC.cnn.train_s/60)}\u00a0min contre ${Math.round(CC.lstm.train_s/60)}. Grilles limitées\u00a0: pas une preuve d\u2019inutilité.`})();
+
+// --- diapositive 7 : coûts
+kpi('cost-kpi',[[fmt(RES.cnt.exp_study1+RES.cnt.runs_e2+RES.cnt.finals_e2),'expériences entraînées au total',TEAL],['\u2248\u00a0'+Math.round(RES.cost1.lstm.train_s/60)+'\u00a0min','pour un entraînement du LSTM (CNN\u00a0: '+Math.round(RES.cost1.cnn.train_s/60)+'\u00a0min)',CORAL],['\u2248\u00a0'+Math.round(RES.cnt.hours_e2)+'\u00a0h','de calcul pour la recherche de l\u2019étude 2',GOLD]]);
+
+// --- diapositive 8 : conclusion
+$('concl-quote').innerHTML='Un CNN simple a battu nos modèles <em>récurrents</em>\u00a0; l\u2019obstacle reste le patient inconnu.';
+$('concl-cards').innerHTML=[['Binaire',`${fmt(RES.cnt.exp_study1+RES.cnt.runs_e2+RES.cnt.finals_e2)} expériences comparables, un seul seuil.`,TEAL],
+['Meilleur modèle',`CNN, PR-AUC ${f3(S2.cnn.pr)} ± ${f3(S2.cnn.sd)} (hasard\u00a0: ${f3(RES.prev)}). Au seuil fixé hors test\u00a0: précision ${f2(S2.cnn.prec)}, rappel ${f2(S2.cnn.sens)}, F1 ${f2(S2.cnn.f1)}.`,CORAL],
+['Honnêteté',`Test lu trois fois\u00a0; blocs de branche mal détectés.`,GOLD]].map(([t,d,c])=>`<div class="card" style="border-top:4px solid ${c}"><h3>${t}</h3><p>${d}</p></div>`).join('');
+
+// nav
+const secs=[...document.querySelectorAll('section')];
+secs.forEach((s,i)=>{const a=document.createElement('a');a.href='#'+s.id;$('nav').appendChild(a);if(i){const f=document.createElement('div');f.className='foot';f.innerHTML=`<span>Anas Draoui · Meriem Khedira</span><span>${i} / ${secs.length-1}</span>`;s.appendChild(f)}});
+const dots=[...document.querySelectorAll('.nav a')];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)dots.forEach((d,i)=>d.classList.toggle('on',secs[i]===e.target))}),{threshold:.5});
+secs.forEach(s=>io.observe(s));
+addEventListener('scroll',()=>$('prog').style.width=100*scrollY/(document.body.scrollHeight-innerHeight)+'%');
+addEventListener('keydown',e=>{const i=Math.max(0,dots.findIndex(d=>d.classList.contains('on')));
+if(['ArrowDown','PageDown',' ','ArrowRight'].includes(e.key)){e.preventDefault();secs[Math.min(i+1,secs.length-1)].scrollIntoView()}
+if(['ArrowUp','PageUp','ArrowLeft'].includes(e.key)){e.preventDefault();secs[Math.max(i-1,0)].scrollIntoView()}});
+
+// ---------- motion layer ----------
+(()=>{
+if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+const root=document.documentElement;root.classList.add('fx');
+const bg=document.createElement('div');bg.className='bg';bg.innerHTML='<i></i><i></i><i></i>';document.body.prepend(bg);
+addEventListener('pointermove',e=>{root.style.setProperty('--px',(e.clientX/innerWidth*2-1).toFixed(3));root.style.setProperty('--py',(e.clientY/innerHeight*2-1).toFixed(3))});
+
+// staggered reveal targets
+secs.forEach(sec=>{let i=0;sec.querySelectorAll('.kicker,h1,h2,.lead,.card,.steps li,:scope>div:not(.grid):not(.card):not(.foot)').forEach(e=>{if(e.parentElement.closest('.card'))return;e.classList.add('rv');e.style.setProperty('--i',Math.min(i++,10))})});
+
+// word-by-word quote
+document.querySelectorAll('.quote').forEach(q=>{let k=0;const walk=n=>[...n.childNodes].forEach(c=>{if(c.nodeType===3){const f=document.createDocumentFragment();c.textContent.split(/(\s+)/).forEach(t=>{if(!t)return;if(/^\s+$/.test(t))f.append(' ');else{const s=document.createElement('span');s.className='w';s.style.setProperty('--i',k++);s.textContent=t;f.append(s)}});c.replaceWith(f)}else walk(c)});walk(q)});
+
+// SVG: draw-on lines, staggered bars, late annotations, beat markers
+secs.forEach(sec=>[...sec.querySelectorAll('svg')].forEach((svg,si)=>{if(svg.id==='pulse')return;let k=0;
+svg.querySelectorAll('path').forEach(p=>{if(p.getAttribute('fill')!=='none')return;p.setAttribute('pathLength',1);p.classList.add('draw');p.style.setProperty('--d',(.5+si*.12+k++*.4).toFixed(2)+'s')})}));
+$('p-window').querySelectorAll(':scope>*:not(path)').forEach((e,k)=>{e.classList.add('late');e.style.setProperty('--d',(1.5+k*.1).toFixed(2)+'s')});
+const rr=$('p-rr');let k2=0;[...rr.querySelectorAll(':scope>*')].forEach(e=>{if(e.tagName==='circle'){const x=(+e.getAttribute('cx')-10)/500;e.classList.add('dotp');e.style.setProperty('--d',(.5+x*1.5).toFixed(2)+'s');
+if(+e.getAttribute('r')>5){const r=e.cloneNode();r.setAttribute('class','ring');r.removeAttribute('fill');r.style.setProperty('--d',(.5+x*1.5).toFixed(2)+'s');rr.appendChild(r)}}
+else if(e.tagName!=='path'){e.classList.add('late');e.style.setProperty('--d',(2.1+k2++*.08).toFixed(2)+'s')}});
+['p-normal','p-abnormal'].forEach(id=>{const s=$(id);s.querySelectorAll('circle').forEach(c=>{const x=+c.getAttribute('cx')/520;c.classList.add('dotp');c.style.setProperty('--d',(.6+x*1.6).toFixed(2)+'s')});
+s.querySelectorAll('text').forEach((e,k)=>{e.classList.add('late');e.style.setProperty('--d',(2.2+k*.1).toFixed(2)+'s')})});
+
+// count-up numbers
+const num=/^(~?)(\d[\d\u202f\u00a0 ]*\d|\d)(.*)$/;
+secs.forEach(sec=>{sec._c=[];sec.querySelectorAll('.kpi .v').forEach(t=>{const m=t.textContent.trim().match(num);if(!m||t.textContent.length>14)return;
+const c={el:t,v:+m[2].replace(/\D/g,''),p:m[1],s:m[3],tok:0};t.textContent=c.p+fmt(0)+c.s;sec._c.push(c)})});
+const count=(c,delay)=>{const tok=++c.tok,t0=performance.now()+delay;const step=now=>{if(c.tok!==tok)return;const k=Math.min(1,Math.max(0,(now-t0)/1500));c.el.textContent=c.p+fmt(Math.round(c.v*(1-Math.pow(1-k,3))))+c.s;if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)};
+const reset=c=>{c.tok++;c.el.textContent=c.p+fmt(0)+c.s};
+
+// section enter / leave
+const io2=new IntersectionObserver(es=>es.forEach(e=>{const s=e.target,on=s.classList.contains('in');
+if(e.intersectionRatio>=.2&&!on){s.classList.add('in');s._c.forEach(c=>count(c,600))}
+else if(e.intersectionRatio===0&&on){s.classList.remove('in');s._c.forEach(reset)}}),{threshold:[0,.2]});
+secs.forEach(s=>io2.observe(s));
+
+// cursor spotlight + tilt on cards
+document.querySelectorAll('.card').forEach(c=>{c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;
+c.style.setProperty('--mx',x+'px');c.style.setProperty('--my',y+'px');
+c.style.transform=`perspective(1000px) rotateX(${((y/r.height-.5)*-4).toFixed(2)}deg) rotateY(${((x/r.width-.5)*4).toFixed(2)}deg)`});
+c.addEventListener('pointerleave',()=>{c.style.transform=''})});
+
+// title: scanning ECG trace with a glowing head
+const pulse=$('pulse'),base=pulse.querySelector('path');pulse.removeAttribute('preserveAspectRatio');base.setAttribute('stroke-opacity',.2);
+const sw=base.cloneNode();sw.setAttribute('pathLength',1);sw.setAttribute('stroke-opacity',1);sw.setAttribute('stroke-width',3.2);sw.style.strokeDasharray='.26 3';pulse.appendChild(sw);
+const dot=el(pulse,'circle',{r:5.5,fill:CORAL,class:'glow'}),L=base.getTotalLength();
+const tick=t=>{const h=(t%4800)/4800*1.3;sw.style.strokeDashoffset=.26-h;const pt=base.getPointAtLength(Math.min(h,1)*L);dot.setAttribute('cx',pt.x);dot.setAttribute('cy',pt.y);dot.style.opacity=h<=1?1:0;requestAnimationFrame(tick)};requestAnimationFrame(tick);
+const hint=document.createElement('div');hint.className='hint';hint.innerHTML='<b>↓</b> molette, flèches ou espace';secs[0].appendChild(hint);
+})();
+</script>
+</body>
+</html>
